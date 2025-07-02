@@ -1,36 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Holiday Calendar</title>
+    <title>Tatil Takvimi</title>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
         #controls { margin-bottom: 20px; }
-        #controls label { margin-right: 5px; }
-        #holidayDetails { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+        #controls label { margin-right: 5px; font-weight: bold; }
+        #calendar { background-color: #fff; padding: 10px; border-radius: 5px; }
+        .fc-daygrid-day.fc-day-today { background-color: #ffe4e1; }
+        #holidayDetails { margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #fff; }
+        #holidaySummary { margin-bottom: 20px; }
     </style>
 </head>
 <body>
 <div id="controls">
-    <label for="sector">Sector Type:</label>
+    <label for="country">Ülke:</label>
+    <select id="country"></select>
+
+    <label for="sector">Sektör Tipi:</label>
     <select id="sector"></select>
 
-    <label for="employeeType">Employee Type:</label>
+    <label for="employeeType">Çalışan Tipi:</label>
     <select id="employeeType"></select>
 
-    <label for="viewSelect">View:</label>
+    <label for="viewSelect">Görünüm:</label>
     <select id="viewSelect">
-        <option value="dayGridMonth">Monthly</option>
-        <option value="timeGridWeek">Weekly</option>
+        <option value="dayGridMonth">Aylık</option>
+        <option value="multiMonthYear">Yıllık</option>
     </select>
 </div>
 
+<div id="holidaySummary"></div>
 <div id="calendar"></div>
 <div id="holidayDetails"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script>
+async function loadCountries() {
+    const res = await fetch('/api/countries');
+    const countries = await res.json();
+    const select = document.getElementById('country');
+    countries.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.countryId;
+        opt.textContent = c.countryName;
+        select.appendChild(opt);
+    });
+    if (countries.length > 0) {
+        select.value = countries[0].countryId;
+    }
+}
+
 async function loadSectorTypes() {
     const res = await fetch('/api/sector-types');
     const types = await res.json();
@@ -60,6 +82,9 @@ function createCalendar() {
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: document.getElementById('viewSelect').value,
         height: 650,
+        views: {
+            multiMonthYear: { type: 'multiMonth', duration: { months: 12 } }
+        },
         events: fetchEvents,
         eventClick: showDetails
     });
@@ -71,33 +96,48 @@ function createCalendar() {
 
 async function fetchEvents(fetchInfo, successCallback, failureCallback) {
     try {
-        const res = await fetch('/api/holidays?countryId=1');
+        const countryId = document.getElementById('country').value;
+        const res = await fetch(`/api/holidays?countryId=${countryId}`);
         const holidays = await res.json();
         const events = holidays.map(h => ({
             title: h.holidayName,
             start: h.holidayDate,
             extendedProps: h
         }));
+        updateSummary(events);
         successCallback(events);
     } catch (e) {
         failureCallback(e);
     }
 }
 
+function updateSummary(events) {
+    const summary = document.getElementById('holidaySummary');
+    if (events.length === 0) {
+        summary.textContent = 'Bu dönemde tatil bulunamadı.';
+        return;
+    }
+    const items = events.map(ev => {
+        const dateStr = new Date(ev.start).toLocaleDateString('tr-TR');
+        return `<li>${dateStr} - ${ev.title}</li>`;
+    }).join('');
+    summary.innerHTML = `<ul>${items}</ul>`;
+}
+
 function showDetails(info) {
     const h = info.event.extendedProps;
     const details = `
         <h3>${h.holidayName}</h3>
-        <p>Type: ${h.holidayType}</p>
-        <p>Date: ${h.holidayDate}</p>
-        <p>Duration: ${h.durationDays}</p>
-        <p>Applies To: ${h.appliesToSector}</p>
+        <p>Türü: ${h.holidayType}</p>
+        <p>Tarih: ${h.holidayDate}</p>
+        <p>Süre: ${h.durationDays}</p>
+        <p>Geçerli Sektör: ${h.appliesToSector}</p>
     `;
     document.getElementById('holidayDetails').innerHTML = details;
 }
 
 async function init() {
-    await Promise.all([loadSectorTypes(), loadEmployeeTypes()]);
+    await Promise.all([loadCountries(), loadSectorTypes(), loadEmployeeTypes()]);
     const calendar = createCalendar();
     calendar.render();
 }
