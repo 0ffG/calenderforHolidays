@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Holiday Calendar</title>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #controls { margin-bottom: 20px; }
+        #controls label { margin-right: 5px; }
+        #holidayDetails { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+<div id="controls">
+    <label for="sector">Sector Type:</label>
+    <select id="sector"></select>
+
+    <label for="employeeType">Employee Type:</label>
+    <select id="employeeType"></select>
+
+    <label for="viewSelect">View:</label>
+    <select id="viewSelect">
+        <option value="dayGridMonth">Monthly</option>
+        <option value="timeGridWeek">Weekly</option>
+    </select>
+</div>
+
+<div id="calendar"></div>
+<div id="holidayDetails"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<script>
+async function loadSectorTypes() {
+    const res = await fetch('/api/sector-types');
+    const types = await res.json();
+    const select = document.getElementById('sector');
+    types.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = t;
+        select.appendChild(opt);
+    });
+}
+
+async function loadEmployeeTypes() {
+    const res = await fetch('/api/employee-types');
+    const types = await res.json();
+    const select = document.getElementById('employeeType');
+    types.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.employeeTypeId;
+        opt.textContent = t.typeName;
+        select.appendChild(opt);
+    });
+}
+
+function createCalendar() {
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: document.getElementById('viewSelect').value,
+        height: 650,
+        events: fetchEvents,
+        eventClick: showDetails
+    });
+    document.getElementById('viewSelect').addEventListener('change', () => {
+        calendar.changeView(document.getElementById('viewSelect').value);
+    });
+    return calendar;
+}
+
+async function fetchEvents(fetchInfo, successCallback, failureCallback) {
+    try {
+        const res = await fetch('/api/holidays?countryId=1');
+        const holidays = await res.json();
+        const events = holidays.map(h => ({
+            title: h.holidayName,
+            start: h.holidayDate,
+            extendedProps: h
+        }));
+        successCallback(events);
+    } catch (e) {
+        failureCallback(e);
+    }
+}
+
+function showDetails(info) {
+    const h = info.event.extendedProps;
+    const details = `
+        <h3>${h.holidayName}</h3>
+        <p>Type: ${h.holidayType}</p>
+        <p>Date: ${h.holidayDate}</p>
+        <p>Duration: ${h.durationDays}</p>
+        <p>Applies To: ${h.appliesToSector}</p>
+    `;
+    document.getElementById('holidayDetails').innerHTML = details;
+}
+
+async function init() {
+    await Promise.all([loadSectorTypes(), loadEmployeeTypes()]);
+    const calendar = createCalendar();
+    calendar.render();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
