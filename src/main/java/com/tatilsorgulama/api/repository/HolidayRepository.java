@@ -23,4 +23,19 @@ public interface HolidayRepository extends JpaRepository<Holiday, Integer> {
      * Sadece ülkeye göre arama yapmak için bir başka örnek metot.
      */
     List<Holiday> findByCountry_CountryId(Integer countryId);
+
+    /**
+     * Finds holidays for employees matching sector and employee type in a given country.
+     * Uses Employee entity to filter relevant holidays by country, sector and employee type.
+     */
+    @org.springframework.data.jpa.repository.Query(
+            "select distinct h from Holiday h " +
+                    "join h.country c " +
+                    "join Employee e on e.country = c " +
+                    "where c.countryId = :countryId " +
+                    "and e.sectorType = :sectorType " +
+                    "and e.employeeType.employeeTypeId = :employeeTypeId")
+    java.util.List<Holiday> findByCountryAndSectorAndEmployeeType(Integer countryId,
+                                                                  String sectorType,
+                                                                  Integer employeeTypeId);
 }

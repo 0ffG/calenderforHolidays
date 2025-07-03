@@ -91,13 +91,18 @@ function createCalendar() {
     document.getElementById('viewSelect').addEventListener('change', () => {
         calendar.changeView(document.getElementById('viewSelect').value);
     });
+    ['country', 'sector', 'employeeType'].forEach(id => {
+        document.getElementById(id).addEventListener('change', () => calendar.refetchEvents());
+    });
     return calendar;
 }
 
 async function fetchEvents(fetchInfo, successCallback, failureCallback) {
     try {
         const countryId = document.getElementById('country').value;
-        const res = await fetch(`/api/holidays?countryId=${countryId}`);
+        const sector = document.getElementById('sector').value;
+        const employeeTypeId = document.getElementById('employeeType').value;
+        const res = await fetch(`/api/holidays/filter?countryId=${countryId}&sectorType=${encodeURIComponent(sector)}&employeeTypeId=${employeeTypeId}`);
         const holidays = await res.json();
         const events = holidays.map(h => ({
             title: h.holidayName,
