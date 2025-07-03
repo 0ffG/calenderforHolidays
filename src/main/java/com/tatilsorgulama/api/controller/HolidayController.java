@@ -31,11 +31,23 @@ public class HolidayController {
     public ResponseEntity<List<Holiday>> queryHolidays(
             @RequestParam Integer countryId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        
+
         List<Holiday> holidays = holidayRepository.findByCountry_CountryIdAndHolidayDate(countryId, date);
         if (holidays.isEmpty()) {
             return ResponseEntity.noContent().build(); // Tatil bulunamadıysa 204 No Content döner
         }
+        return ResponseEntity.ok(holidays);
+    }
+
+    // Yeni: /api/holidays/filter?countryId=1&sectorType=Public&employeeTypeId=2
+    // Seçilen ülke, sektör ve çalışan tipine uygun tatilleri listeler
+    @GetMapping("/filter")
+    public ResponseEntity<List<Holiday>> filterHolidays(
+            @RequestParam Integer countryId,
+            @RequestParam String sectorType,
+            @RequestParam Integer employeeTypeId) {
+        List<Holiday> holidays = holidayRepository
+                .findByCountryAndSectorAndEmployeeType(countryId, sectorType, employeeTypeId);
         return ResponseEntity.ok(holidays);
     }
 
