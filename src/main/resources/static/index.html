@@ -16,29 +16,35 @@
 </head>
 <body>
 <div id="controls">
-    <label for="country">Ülke:</label>
-    <select id="country"></select>
+    <div style="margin-bottom: 20px;">
+        <label for="country">Ülke:</label>
+        <select id="country"></select>
 
-    <label for="sector">Sektör Tipi:</label>
-    <select id="sector"></select>
+        <label for="viewSelect">Görünüm:</label>
+        <select id="viewSelect">
+            <option value="dayGridMonth">Aylık</option>
+            <option value="multiMonthYear">Yıllık</option>
+        </select>
+    </div>
 
-    <label for="viewSelect">Görünüm:</label>
-    <select id="viewSelect">
-        <option value="dayGridMonth">Aylık</option>
-        <option value="multiMonthYear">Yıllık</option>
-    </select>
+    <div id="calendar" style="margin-bottom: 20px;"></div>
 
-    <label for="startDate">Başlangıç:</label>
-    <input type="date" id="startDate">
-    <label for="endDate">Bitiş:</label>
-    <input type="date" id="endDate">
-    <button id="rangeBtn">Aralığı Hesapla</button>
+    <div style="margin-bottom: 20px;">
+        <label for="sector">Sektör Tipi:</label>
+        <select id="sector"></select>
+
+        <label for="startDate">Başlangıç:</label>
+        <input type="date" id="startDate">
+        <label for="endDate">Bitiş:</label>
+        <input type="date" id="endDate">
+        <button id="rangeBtn">Aralığı Hesapla</button>
+    </div>
+
+    <div id="rangeResult" style="margin-top: 10px;"></div>
 </div>
 
-<div id="holidaySummary"></div>
-<div id="calendar"></div>
-<div id="rangeResult"></div>
-<div id="holidayDetails"></div>
+<div id="holidaySummary" style="margin-top: 20px;"></div>
+<div id="holidayDetails" style="margin-top: 20px;"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script>
