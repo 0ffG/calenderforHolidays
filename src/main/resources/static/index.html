@@ -5,13 +5,60 @@
     <title>Tatil Takvimi</title>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
-        #controls { margin-bottom: 20px; }
-        #controls label { margin-right: 5px; font-weight: bold; }
-        #calendar { background-color: #fff; padding: 10px; border-radius: 5px; }
-        .fc-daygrid-day.fc-day-today { background-color: #ffe4e1; }
-        #holidayDetails { margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #fff; }
-        #holidaySummary { margin-bottom: 20px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(to right, #f8fbff, #e0eafc);
+        }
+
+        #controls {
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #controls label {
+            margin-right: 5px;
+            font-weight: bold;
+        }
+
+        #rangeBtn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #rangeBtn:hover {
+            background-color: #0056b3;
+        }
+
+        #calendar {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .fc-daygrid-day.fc-day-today {
+            background-color: #ffe4e1;
+        }
+
+        #holidayDetails {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+
+        #holidaySummary {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -196,7 +243,22 @@ async function calculateRange() {
         const res = await fetch(`/api/holidays/range?countryId=${countryId}&sectorType=${encodeURIComponent(sector)}&start=${start}&end=${end}`);
         if (!res.ok) throw new Error('Tatiller getirilemedi.');
         const holidays = await res.json();
-        document.getElementById('rangeResult').textContent = `Toplam ${holidays.length} tatil bulundu.`;
+
+        const holidayDates = new Set(holidays.map(h => h.holidayDate));
+        let workDays = 0;
+        let current = new Date(start);
+        const endDate = new Date(end);
+        while (current <= endDate) {
+            const day = current.getDay();
+            const iso = current.toISOString().slice(0,10);
+            if (day !== 0 && day !== 6 && !holidayDates.has(iso)) {
+                workDays++;
+            }
+            current.setDate(current.getDate() + 1);
+        }
+
+        document.getElementById('rangeResult').textContent =
+            `Toplam ${holidays.length} tatil günü, ${workDays} iş günü.`;
     } catch (e) {
         console.error(e);
         document.getElementById('rangeResult').textContent = 'Hata oluştu.';
