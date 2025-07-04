@@ -39,4 +39,19 @@ public interface HolidayRepository extends JpaRepository<Holiday, Integer> {
             "where c.countryId = :countryId " +
             "and e.sectorType = :sectorType")
     List<Holiday> findByCountryAndSector(Integer countryId, String sectorType);
+
+    /**
+     * Lists holidays in a given country and sector between two dates.
+     */
+    @Query(
+            "select distinct h from Holiday h " +
+            "join h.country c " +
+            "join Employee e on e.country = c " +
+            "where c.countryId = :countryId " +
+            "and e.sectorType = :sectorType " +
+            "and h.holidayDate between :startDate and :endDate")
+    List<Holiday> findByCountrySectorAndDateBetween(Integer countryId,
+                                                   String sectorType,
+                                                   LocalDate startDate,
+                                                   LocalDate endDate);
 }
