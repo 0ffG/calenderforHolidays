@@ -7,7 +7,6 @@ COPY src ./src
 RUN mvn package -DskipTests
 
 # 2. Aşama: Çalıştırılabilir imajı oluştur
-# HATALI SATIRIN DÜZELTİLMİŞ HALİ:
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar

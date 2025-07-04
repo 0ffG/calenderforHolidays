@@ -34,12 +34,12 @@ public class HolidayController {
 
         List<Holiday> holidays = holidayRepository.findByCountry_CountryIdAndHolidayDate(countryId, date);
         if (holidays.isEmpty()) {
-            return ResponseEntity.noContent().build(); // Tatil bulunamadıysa 204 No Content döner
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(holidays);
     }
 
-    // Yeni: /api/holidays/filter?countryId=1&sectorType=Public&employeeTypeId=2
+    // Örnek: /api/holidays/filter?countryId=1&sectorType=Public&employeeTypeId=2
     // Seçilen ülke, sektör ve çalışan tipine uygun tatilleri listeler
     @GetMapping("/filter")
     public ResponseEntity<List<Holiday>> filterHolidays(
@@ -50,11 +50,24 @@ public class HolidayController {
                 .findByCountryAndSectorAndEmployeeType(countryId, sectorType, employeeTypeId);
         return ResponseEntity.ok(holidays);
     }
+    
+    // YENİ EKLENEN ENDPOINT
+    /**
+     * Sadece ülke ve sektöre göre tatilleri listeler.
+     * Örnek: /api/holidays/filter-by-sector?countryId=1&sectorType=Public
+     */
+    @GetMapping("/filter-by-sector")
+    public ResponseEntity<List<Holiday>> filterHolidaysBySector(
+            @RequestParam Integer countryId,
+            @RequestParam String sectorType) {
+        // Repository'de oluşturduğumuz yeni metodu çağırıyoruz.
+        List<Holiday> holidays = holidayRepository.findByCountryAndSector(countryId, sectorType);
+        return ResponseEntity.ok(holidays);
+    }
 
     // Örnek: POST isteği ile /api/holidays adresine JSON formatında yeni tatil bilgisi göndermek
     @PostMapping
     public ResponseEntity<Holiday> createHoliday(@RequestBody Holiday newHoliday) {
-        // Not: Gelen newHoliday nesnesinde country.countryId dolu olmalıdır.
         Holiday savedHoliday = holidayRepository.save(newHoliday);
         return ResponseEntity.ok(savedHoliday);
     }

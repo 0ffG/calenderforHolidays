@@ -2,12 +2,19 @@ package com.tatilsorgulama.api.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "HOLIDAYS")
-@Data
+@Getter // @Data yerine sadece @Getter ve @Setter kullanıyoruz
+@Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
 public class Holiday {
 
     @Id
@@ -30,7 +37,7 @@ public class Holiday {
     @Column(name = "APPLIES_TO_SECTOR")
     private String appliesToSector;
     
-    // Birçok tatil tek bir ülkeye ait olabilir (Many-to-One)
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "COUNTRY_ID") // Hangi kolon üzerinden birleşeceklerini belirtir
     private Country country;

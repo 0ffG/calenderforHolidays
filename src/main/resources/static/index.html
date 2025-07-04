@@ -22,9 +22,6 @@
     <label for="sector">Sektör Tipi:</label>
     <select id="sector"></select>
 
-    <label for="employeeType">Çalışan Tipi:</label>
-    <select id="employeeType"></select>
-
     <label for="viewSelect">Görünüm:</label>
     <select id="viewSelect">
         <option value="dayGridMonth">Aylık</option>
@@ -38,80 +35,107 @@
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script>
+// Takvim nesnesini daha geniş bir kapsamda tanımlayalım ki her yerden ulaşılabilsin.
+let calendar;
+
 async function loadCountries() {
-    const res = await fetch('/api/countries');
-    const countries = await res.json();
-    const select = document.getElementById('country');
-    countries.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.countryId;
-        opt.textContent = c.countryName;
-        select.appendChild(opt);
-    });
-    if (countries.length > 0) {
-        select.value = countries[0].countryId;
+    try {
+        const res = await fetch('/api/countries');
+        if (!res.ok) throw new Error('Ülkeler yüklenemedi.');
+        const countries = await res.json();
+        const select = document.getElementById('country');
+        select.innerHTML = ''; // Önceki seçenekleri temizle
+        countries.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.countryId;
+            opt.textContent = c.countryName;
+            select.appendChild(opt);
+        });
+    } catch (e) {
+        console.error(e);
     }
 }
 
 async function loadSectorTypes() {
-    const res = await fetch('/api/sector-types');
-    const types = await res.json();
-    const select = document.getElementById('sector');
-    types.forEach(t => {
-        const opt = document.createElement('option');
-        opt.value = t;
-        opt.textContent = t;
-        select.appendChild(opt);
-    });
+    try {
+        const res = await fetch('/api/sector-types');
+        if (!res.ok) throw new Error('Sektör tipleri yüklenemedi.');
+        const types = await res.json();
+        const select = document.getElementById('sector');
+        select.innerHTML = ''; // Önceki seçenekleri temizle
+        types.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            opt.textContent = t;
+            select.appendChild(opt);
+        });
+    } catch (e) {
+        console.error(e);
+    }
 }
 
-async function loadEmployeeTypes() {
-    const res = await fetch('/api/employee-types');
-    const types = await res.json();
-    const select = document.getElementById('employeeType');
-    types.forEach(t => {
-        const opt = document.createElement('option');
-        opt.value = t.employeeTypeId;
-        opt.textContent = t.typeName;
-        select.appendChild(opt);
-    });
-}
-
-function createCalendar() {
+function initializeCalendar() {
     const calendarEl = document.getElementById('calendar');
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: document.getElementById('viewSelect').value,
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
         height: 650,
         views: {
             multiMonthYear: { type: 'multiMonth', duration: { months: 12 } }
         },
         events: fetchEvents,
-        eventClick: showDetails
+        eventClick: showDetails,
+        locale: 'tr'
     });
-    document.getElementById('viewSelect').addEventListener('change', () => {
-        calendar.changeView(document.getElementById('viewSelect').value);
+    calendar.render();
+}
+
+function setupEventListeners() {
+    // Ülke veya Sektör filtresi değiştiğinde takvimi yenile
+    ['country', 'sector'].forEach(id => {
+        document.getElementById(id).addEventListener('change', () => {
+            // Tarayıcı konsolunda bu mesajı görüyorsanız, filtre çalışıyor demektir.
+            console.log(`${id} filtresi değişti. Takvim yenileniyor...`);
+            if (calendar) {
+                calendar.refetchEvents();
+            }
+        });
     });
-    ['country', 'sector', 'employeeType'].forEach(id => {
-        document.getElementById(id).addEventListener('change', () => calendar.refetchEvents());
+
+    // Görünüm (Aylık/Yıllık) filtresi değiştiğinde takvimin görünümünü değiştir
+    document.getElementById('viewSelect').addEventListener('change', (event) => {
+        if (calendar) {
+            calendar.changeView(event.target.value);
+        }
     });
-    return calendar;
 }
 
 async function fetchEvents(fetchInfo, successCallback, failureCallback) {
     try {
         const countryId = document.getElementById('country').value;
         const sector = document.getElementById('sector').value;
-        const employeeTypeId = document.getElementById('employeeType').value;
-        const res = await fetch(`/api/holidays/filter?countryId=${countryId}&sectorType=${encodeURIComponent(sector)}&employeeTypeId=${employeeTypeId}`);
+
+        // Eğer filtrelerden biri boşsa (veri henüz yüklenmediyse) tatil getirme
+        if (!countryId || !sector) {
+            successCallback([]); // Boş bir dizi gönder
+            updateSummary([]);
+            return;
+        }
+
+        const res = await fetch(`/api/holidays/filter-by-sector?countryId=${countryId}&sectorType=${encodeURIComponent(sector)}`);
+        if (!res.ok) throw new Error('Tatiller getirilemedi.');
+        
         const holidays = await res.json();
+        
         const events = holidays.map(h => ({
             title: h.holidayName,
             start: h.holidayDate,
             extendedProps: h
         }));
+
         updateSummary(events);
         successCallback(events);
     } catch (e) {
+        console.error(e);
         failureCallback(e);
     }
 }
@@ -119,11 +143,11 @@ async function fetchEvents(fetchInfo, successCallback, failureCallback) {
 function updateSummary(events) {
     const summary = document.getElementById('holidaySummary');
     if (events.length === 0) {
-        summary.textContent = 'Bu dönemde tatil bulunamadı.';
+        summary.textContent = 'Seçili kriterlere göre tatil bulunamadı.';
         return;
     }
     const items = events.map(ev => {
-        const dateStr = new Date(ev.start).toLocaleDateString('tr-TR');
+        const dateStr = new Date(ev.start).toLocaleDateString('tr-TR', { day: '2-digit', month: 'long', year: 'numeric' });
         return `<li>${dateStr} - ${ev.title}</li>`;
     }).join('');
     summary.innerHTML = `<ul>${items}</ul>`;
@@ -131,20 +155,29 @@ function updateSummary(events) {
 
 function showDetails(info) {
     const h = info.event.extendedProps;
+    const dateStr = new Date(h.holidayDate).toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     const details = `
         <h3>${h.holidayName}</h3>
-        <p>Türü: ${h.holidayType}</p>
-        <p>Tarih: ${h.holidayDate}</p>
-        <p>Süre: ${h.durationDays}</p>
-        <p>Geçerli Sektör: ${h.appliesToSector}</p>
+        <p><strong>Türü:</strong> ${h.holidayType}</p>
+        <p><strong>Tarih:</strong> ${dateStr}</p>
+        <p><strong>Süre:</strong> ${h.durationDays} gün</p>
+        <p><strong>Geçerli Sektör:</strong> ${h.appliesToSector}</p>
     `;
     document.getElementById('holidayDetails').innerHTML = details;
 }
 
 async function init() {
-    await Promise.all([loadCountries(), loadSectorTypes(), loadEmployeeTypes()]);
-    const calendar = createCalendar();
-    calendar.render();
+    // 1. Önce takvimi ekrana çiz.
+    initializeCalendar();
+    
+    // 2. Sonra filtreler için gerekli verileri (ülke, sektör) yükle.
+    await Promise.all([loadCountries(), loadSectorTypes()]);
+    
+    // 3. Veriler yüklendikten sonra, takvimin ilk verilerini getirmesi için onu tetikle.
+    calendar.refetchEvents();
+
+    // 4. Son olarak, filtrelerin değişikliklerini dinleyecek olan kodları çalıştır.
+    setupEventListeners();
 }
 
 document.addEventListener('DOMContentLoaded', init);

@@ -1,11 +1,17 @@
 package com.tatilsorgulama.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "COUNTRIES")
-@Data // Lombok: Getter, Setter, toString, EqualsAndHashCode metotlarını otomatik oluşturur
+@Getter // @Data yerine sadece @Getter ve @Setter kullanıyoruz
+@Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Country {
 
     @Id
