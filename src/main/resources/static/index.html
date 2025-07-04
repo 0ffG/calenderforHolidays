@@ -27,10 +27,17 @@
         <option value="dayGridMonth">Aylık</option>
         <option value="multiMonthYear">Yıllık</option>
     </select>
+
+    <label for="startDate">Başlangıç:</label>
+    <input type="date" id="startDate">
+    <label for="endDate">Bitiş:</label>
+    <input type="date" id="endDate">
+    <button id="rangeBtn">Aralığı Hesapla</button>
 </div>
 
 <div id="holidaySummary"></div>
 <div id="calendar"></div>
+<div id="rangeResult"></div>
 <div id="holidayDetails"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
@@ -107,6 +114,8 @@ function setupEventListeners() {
             calendar.changeView(event.target.value);
         }
     });
+
+    document.getElementById('rangeBtn').addEventListener('click', calculateRange);
 }
 
 async function fetchEvents(fetchInfo, successCallback, failureCallback) {
@@ -127,7 +136,7 @@ async function fetchEvents(fetchInfo, successCallback, failureCallback) {
         const holidays = await res.json();
         
         const events = holidays.map(h => ({
-            title: h.holidayName,
+            title: `${h.holidayName} (${h.appliesToSector})`,
             start: h.holidayDate,
             extendedProps: h
         }));
@@ -164,6 +173,28 @@ function showDetails(info) {
         <p><strong>Geçerli Sektör:</strong> ${h.appliesToSector}</p>
     `;
     document.getElementById('holidayDetails').innerHTML = details;
+}
+
+async function calculateRange() {
+    const countryId = document.getElementById('country').value;
+    const sector = document.getElementById('sector').value;
+    const start = document.getElementById('startDate').value;
+    const end = document.getElementById('endDate').value;
+
+    if (!countryId || !sector || !start || !end) {
+        document.getElementById('rangeResult').textContent = 'Lütfen tüm alanları doldurun.';
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/holidays/range?countryId=${countryId}&sectorType=${encodeURIComponent(sector)}&start=${start}&end=${end}`);
+        if (!res.ok) throw new Error('Tatiller getirilemedi.');
+        const holidays = await res.json();
+        document.getElementById('rangeResult').textContent = `Toplam ${holidays.length} tatil bulundu.`;
+    } catch (e) {
+        console.error(e);
+        document.getElementById('rangeResult').textContent = 'Hata oluştu.';
+    }
 }
 
 async function init() {

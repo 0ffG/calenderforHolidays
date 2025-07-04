@@ -65,6 +65,22 @@ public class HolidayController {
         return ResponseEntity.ok(holidays);
     }
 
+    /**
+     * Lists holidays between two dates for a given country and sector.
+     * Example: /api/holidays/range?countryId=1&sectorType=Public&start=2024-01-01&end=2024-12-31
+     */
+    @GetMapping("/range")
+    public ResponseEntity<List<Holiday>> getHolidaysInRange(
+            @RequestParam Integer countryId,
+            @RequestParam String sectorType,
+            @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        List<Holiday> holidays = holidayRepository
+                .findByCountrySectorAndDateBetween(countryId, sectorType, startDate, endDate);
+        return ResponseEntity.ok(holidays);
+    }
+
     // Örnek: POST isteği ile /api/holidays adresine JSON formatında yeni tatil bilgisi göndermek
     @PostMapping
     public ResponseEntity<Holiday> createHoliday(@RequestBody Holiday newHoliday) {
