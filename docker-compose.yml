@@ -1,0 +1,33 @@
+# Docker Compose dosya formatının sürümünü belirtir.
+version: '3.8'
+
+# Çalıştırılacak servisleri (container'ları) tanımlar.
+services:
+  # 'oracle-db' adında bir veritabanı servisi tanımlıyoruz.
+  oracle-db:
+    # Kullanılacak Docker imajı. Bu, Oracle'ın resmi Express Edition (XE) imajıdır.
+    image: container-registry.oracle.com/database/express:latest
+    
+    # Container'a özel bir isim verir.
+    container_name: oracle-xe-db
+    
+    # Port yönlendirmesi. Bilgisayarınızın 1521 portuna gelen istekleri,
+    # container'ın içindeki 1521 portuna yönlendirir.
+    ports:
+      - "1521:1521"
+      
+    # Ortam değişkenleri. Container'ın içindeki ayarları yapmak için kullanılır.
+    environment:
+      # Bu değişken, SYS, SYSTEM ve PDBADMIN kullanıcıları için şifreyi 'oracle' olarak ayarlar.
+      # application.properties dosyanızdaki şifre ile aynıdır.
+      - ORACLE_PWD=oracle
+      
+    # Veri kalıcılığı için volume (disk alanı) tanımlaması.
+    # Bu sayede container durdurulup yeniden başlatılsa bile veritabanı verileri kaybolmaz.
+    volumes:
+      - oracledata:/opt/oracle/oradata
+
+# Servisler tarafından kullanılacak volume'leri tanımlar.
+volumes:
+  oracledata:
+    # Bu volume'ü Docker'ın yönetmesine izin veriyoruz.
