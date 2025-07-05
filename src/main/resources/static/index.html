@@ -254,7 +254,7 @@ async function fetchEvents(fetchInfo, successCallback, failureCallback) {
             return;
         }
 
-        const res = await fetch(`/api/holidays/filter?countryId=${countryId}&targetGroup=${encodeURIComponent(sector)}`);
+        const res = await fetch(`/api/holidays/filter?countryId=${countryId}&targetGroup=${encodeURIComponent(sector)}&lang=${currentLang}`);
         if (!res.ok) throw new Error('Tatiller getirilemedi.');
         
         const holidays = await res.json();

@@ -3,6 +3,7 @@ package com.tatilsorgulama.api.controller;
 import com.tatilsorgulama.api.entity.Holiday;
 import com.tatilsorgulama.api.repository.HolidayRepository;
 import com.tatilsorgulama.api.dto.HolidayDescDto;
+import com.tatilsorgulama.api.dto.HolidayEventDto;
 import com.tatilsorgulama.api.repository.HolidayDescriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -43,11 +44,12 @@ public class HolidayController {
 
     // Filters holidays by country and target group code
     @GetMapping("/filter")
-    public ResponseEntity<List<Holiday>> filterHolidays(
+    public ResponseEntity<List<HolidayEventDto>> filterHolidays(
             @RequestParam Integer countryId,
-            @RequestParam String targetGroup) {
-        List<Holiday> holidays = holidayRepository
-                .findByCountryAndTargetGroup(countryId, targetGroup);
+            @RequestParam String targetGroup,
+            @RequestParam(defaultValue = "en") String lang) {
+        List<HolidayEventDto> holidays = holidayRepository
+                .findEvents(countryId, targetGroup, lang);
         return ResponseEntity.ok(holidays);
     }
     
