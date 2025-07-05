@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "HOLIDAY_TYPE_TRANSLATIONS", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"HOLIDAY_TYPE_ID", "LANGUAGE_CODE"})
+        @UniqueConstraint(columnNames = {"HOLIDAY_TYPE_ID", "LANGUAGE_ID"})
 })
 @Getter
 @Setter
@@ -20,8 +20,9 @@ public class HolidayTypeTranslation {
     @JoinColumn(name = "HOLIDAY_TYPE_ID")
     private HolidayType holidayType;
 
-    @Column(name = "LANGUAGE_CODE", nullable = false, length = 5)
-    private String languageCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "LANGUAGE_ID")
+    private Language language;
 
     @Column(name = "NAME", nullable = false, length = 100)
     private String name;

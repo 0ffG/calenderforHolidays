@@ -77,6 +77,7 @@
         <select id="lang">
             <option value="en">EN</option>
             <option value="fr">FR</option>
+            <option value="tr">TR</option>
         </select>
     </div>
 
@@ -104,72 +105,108 @@
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script>
-// Takvim nesnesini daha geniş bir kapsamda tanımlayalım ki her yerden ulaşılabilsin.
+console.log("LOG: Script starting.");
+
+// Global variables
 let calendar;
 let currentLang = 'en';
 let translations = {};
 
+/**
+ * A robust way to create a date from a 'YYYY-MM-DD' string and add days, avoiding timezone pitfalls.
+ * @param {string} dateString - The date in 'YYYY-MM-DD' format.
+ * @param {number} days - The number of days to add.
+ * @returns {string} The new date in 'YYYY-MM-DD' format.
+ */
+function addDaysToDateString(dateString, days) {
+    // Treat the input string as UTC to prevent timezone conversion issues.
+    const date = new Date(dateString + 'T00:00:00Z');
+    date.setUTCDate(date.getUTCDate() + days);
+    return date.toISOString().slice(0, 10); // Return as 'YYYY-MM-DD'
+}
+
+
 async function loadTranslations(lang) {
-    const res = await fetch(`/lang/${lang}.json`);
-    translations = await res.json();
-    currentLang = lang;
-    document.getElementById('lblCountry').textContent = translations.country + ':';
-    document.getElementById('lblView').textContent = translations.view + ':';
-    document.getElementById('optMonth').textContent = translations.month;
-    document.getElementById('optYear').textContent = translations.year;
-    document.getElementById('lblType').textContent = translations.type + ':';
-    document.getElementById('lblLang').textContent = translations.language + ':';
-    document.getElementById('lblTarget').textContent = translations.targetGroup + ':';
-    document.getElementById('lblStart').textContent = translations.start + ':';
-    document.getElementById('lblEnd').textContent = translations.end + ':';
-    document.getElementById('rangeBtn').textContent = translations.calculate;
-    if (calendar) {
-        calendar.setOption('locale', lang);
+    console.log(`LOG: loadTranslations called for language: ${lang}`);
+    try {
+        const res = await fetch(`${window.location.origin}/lang/${lang}.json`);
+        translations = await res.json();
+        console.log("LOG: Translations loaded successfully:", translations);
+        currentLang = lang;
+        // Update UI text
+        document.getElementById('lblCountry').textContent = translations.country + ':';
+        document.getElementById('lblView').textContent = translations.view + ':';
+        document.getElementById('optMonth').textContent = translations.month;
+        document.getElementById('optYear').textContent = translations.year;
+        document.getElementById('lblType').textContent = translations.type + ':';
+        document.getElementById('lblLang').textContent = translations.language + ':';
+        document.getElementById('lblTarget').textContent = translations.targetGroup + ':';
+        document.getElementById('lblStart').textContent = translations.start + ':';
+        document.getElementById('lblEnd').textContent = translations.end + ':';
+        document.getElementById('rangeBtn').textContent = translations.calculate;
+        if (calendar) {
+            console.log("LOG: Setting calendar locale to:", lang);
+            calendar.setOption('locale', lang);
+        }
+        // Reload descriptions for the new language
+        loadDescriptions();
+    } catch (e) {
+        console.error("ERROR in loadTranslations:", e);
     }
-    loadDescriptions();
 }
 
 async function loadCountries() {
+    console.log("LOG: loadCountries called.");
     try {
-        const res = await fetch('/api/countries');
-        if (!res.ok) throw new Error('Ülkeler yüklenemedi.');
+        const res = await fetch(`${window.location.origin}/api/countries`);
+        console.log("LOG: /api/countries response status:", res.status);
+        if (!res.ok) throw new Error('Countries could not be loaded.');
         const countries = await res.json();
+        console.log("LOG: Fetched countries:", countries);
         const select = document.getElementById('country');
-        select.innerHTML = ''; // Önceki seçenekleri temizle
+        select.innerHTML = '';
         countries.forEach(c => {
             const opt = document.createElement('option');
-            opt.value = c.countryId;
-            opt.textContent = c.countryName;
+            opt.value = c.id; // Corrected from c.countryId
+            opt.textContent = c.name; // Corrected from c.countryName
             select.appendChild(opt);
         });
+        console.log("LOG: Country dropdown populated.");
     } catch (e) {
-        console.error(e);
+        console.error("ERROR in loadCountries:", e);
     }
 }
 
 async function loadSectorTypes() {
+    console.log("LOG: loadSectorTypes called.");
     try {
-        const res = await fetch('/api/target-groups');
-        if (!res.ok) throw new Error('Types load error');
+        const res = await fetch(`${window.location.origin}/api/target-groups`);
+        console.log("LOG: /api/target-groups response status:", res.status);
+        if (!res.ok) throw new Error('Target groups could not be loaded.');
         const types = await res.json();
+        console.log("LOG: Fetched target groups:", types);
         const select = document.getElementById('sector');
-        select.innerHTML = ''; // Önceki seçenekleri temizle
+        select.innerHTML = '';
         types.forEach(t => {
             const opt = document.createElement('option');
             opt.value = t.code;
             opt.textContent = t.code;
             select.appendChild(opt);
         });
+        console.log("LOG: Sector dropdown populated.");
     } catch (e) {
-        console.error(e);
+        console.error("ERROR in loadSectorTypes:", e);
     }
 }
 
 async function loadHolidayTypes() {
+    console.log("LOG: loadHolidayTypes called.");
     try {
-        const res = await fetch('/api/holiday-types');
-        if (!res.ok) throw new Error('type err');
+        const res = await fetch(`${window.location.origin}/api/holiday-types`);
+        console.log("LOG: /api/holiday-types response status:", res.status);
+        if (!res.ok) throw new Error('Holiday types could not be loaded.');
         const types = await res.json();
+        console.log("LOG: Fetched holiday types:", types);
         const select = document.getElementById('type');
         select.innerHTML = '';
         types.forEach(t => {
@@ -178,12 +215,14 @@ async function loadHolidayTypes() {
             opt.textContent = t.code;
             select.appendChild(opt);
         });
+        console.log("LOG: Holiday Type dropdown populated.");
     } catch (e) {
-        console.error(e);
+        console.error("ERROR in loadHolidayTypes:", e);
     }
 }
 
 function initializeCalendar() {
+    console.log("LOG: initializeCalendar called.");
     const calendarEl = document.getElementById('calendar');
     calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
@@ -196,97 +235,120 @@ function initializeCalendar() {
         locale: currentLang
     });
     calendar.render();
+    console.log("LOG: Calendar rendered.");
 }
 
 async function loadDescriptions() {
+    console.log("LOG: loadDescriptions called.");
     const countryId = document.getElementById('country').value;
+    console.log(`LOG: Loading descriptions for countryId: ${countryId}, lang: ${currentLang}`);
     if (!countryId) {
+        console.log("LOG: No country selected, clearing holiday summary.");
         document.getElementById('holidaySummary').innerHTML = '';
         return;
     }
     try {
-        const res = await fetch(`/api/holidays/descriptions?countryId=${countryId}&language=${currentLang}`);
-        if (!res.ok) throw new Error('desc');
+        const url = `${window.location.origin}/api/holidays/descriptions?countryId=${countryId}&language=${currentLang}`;
+        console.log("LOG: Fetching descriptions from URL:", url);
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Descriptions could not be loaded.');
         const list = await res.json();
+        console.log("LOG: Fetched descriptions:", list);
         const items = list.map(d => {
             const dateStr = new Date(d.startDate).toLocaleDateString(currentLang);
             return `<li>${dateStr} - <strong>${d.name}</strong>: ${d.description}</li>`;
         }).join('');
         document.getElementById('holidaySummary').innerHTML = `<ul>${items}</ul>`;
     } catch (e) {
-        console.error(e);
+        console.error("ERROR in loadDescriptions:", e);
     }
 }
 
 function setupEventListeners() {
+    console.log("LOG: setupEventListeners called.");
     ['country', 'sector'].forEach(id => {
-        document.getElementById(id).addEventListener('change', () => {
+        document.getElementById(id).addEventListener('change', (e) => {
+            console.log(`LOG: Event listener triggered for '${id}'. New value: ${e.target.value}`);
             if (calendar) {
+                console.log("LOG: Refetching calendar events.");
                 calendar.refetchEvents();
             }
-            if (id === 'country') loadDescriptions();
+            if (id === 'country') {
+                loadDescriptions();
+            }
         });
     });
 
     document.getElementById('lang').addEventListener('change', e => {
+        console.log(`LOG: Language changed to: ${e.target.value}`);
         loadTranslations(e.target.value);
     });
 
-    // Change calendar view when selection changes
     document.getElementById('viewSelect').addEventListener('change', (event) => {
+        console.log(`LOG: Calendar view changed to: ${event.target.value}`);
         if (calendar) {
             calendar.changeView(event.target.value);
         }
     });
 
     document.getElementById('rangeBtn').addEventListener('click', calculateRange);
+    console.log("LOG: Event listeners set up.");
 }
 
 async function fetchEvents(fetchInfo, successCallback, failureCallback) {
+    console.log("LOG: fetchEvents called by FullCalendar.");
     try {
         const countryId = document.getElementById('country').value;
         const sector = document.getElementById('sector').value;
+        console.log(`LOG: fetchEvents params - countryId: ${countryId}, targetGroup: ${sector}, lang: ${currentLang}`);
 
-        // Eğer filtrelerden biri boşsa (veri henüz yüklenmediyse) tatil getirme
         if (!countryId || !sector) {
+            console.log("LOG: Missing country or sector. Returning empty array.");
             successCallback([]);
             updateSummary([]);
             return;
         }
 
-        const res = await fetch(`/api/holidays/filter?countryId=${countryId}&targetGroup=${encodeURIComponent(sector)}&lang=${currentLang}`);
-        if (!res.ok) throw new Error('Tatiller getirilemedi.');
+        const url = `${window.location.origin}/api/holidays/filter?countryId=${countryId}&targetGroup=${encodeURIComponent(sector)}&lang=${currentLang}`;
+        console.log("LOG: Fetching events from URL:", url);
+        const res = await fetch(url);
+        console.log("LOG: /api/holidays/filter response status:", res.status);
+        if (!res.ok) throw new Error('Holidays could not be fetched.');
         
         const holidays = await res.json();
+        console.log("LOG: Fetched holidays raw data:", holidays);
         
-        const events = holidays.map(h => ({
-            title: `${h.holidayName} (${h.appliesToSector})`,
-            start: h.holidayDate,
-            extendedProps: h
-        }));
+        const events = holidays.map(h => {
+            return {
+                title: `${h.holidayName} (${h.appliesToSector})`,
+                start: h.holidayDate,
+                // FullCalendar's 'end' date is exclusive. If an event has a duration of 3 days,
+                // starting on '2025-03-31', it occupies Mar 31, Apr 1, and Apr 2.
+                // The 'end' property must be '2025-04-03'.
+                // Our `addDaysToDateString` function correctly calculates this.
+                end: h.durationDays > 1 ? addDaysToDateString(h.holidayDate, h.durationDays) : null,
+                extendedProps: h
+            };
+        });
 
+        console.log("LOG: Mapped events for calendar:", events);
         updateSummary(events);
         successCallback(events);
     } catch (e) {
-        console.error(e);
+        console.error("ERROR in fetchEvents:", e);
         failureCallback(e);
     }
 }
 
 function updateSummary(events) {
-    const summary = document.getElementById('holidaySummary');
-    if (events.length === 0) {
-        summary.textContent = translations.noHolidays;
-        return;
-    }
-    const items = events.map(ev => {
-        const dateStr = new Date(ev.start).toLocaleDateString(currentLang, { day: '2-digit', month: 'long', year: 'numeric' });
-        return `<li>${dateStr} - ${ev.title}</li>`;
-    }).join('');
-    summary.innerHTML = `<ul>${items}</ul>`;
+    console.log("LOG: updateSummary called with", events.length, "events. (This function is now disabled to prevent overwriting the description list)");
+    // This function is disabled to prevent a race condition with loadDescriptions.
+    // The description list from loadDescriptions is considered the primary content for this area.
+    return;
 }
 
 function showDetails(info) {
+    console.log("LOG: showDetails called for event:", info.event);
     const h = info.event.extendedProps;
     const dateStr = new Date(h.holidayDate).toLocaleDateString(currentLang, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     const details = `
@@ -300,11 +362,13 @@ function showDetails(info) {
 }
 
 async function calculateRange() {
+    console.log("LOG: calculateRange called.");
     const countryId = document.getElementById('country').value;
     const sector = document.getElementById('sector').value;
     const type = document.getElementById('type').value;
     const start = document.getElementById('startDate').value;
     const end = document.getElementById('endDate').value;
+    console.log(`LOG: calculateRange params - countryId: ${countryId}, sector: ${sector}, type: ${type}, start: ${start}, end: ${end}`);
 
     if (!countryId || !sector || !type || !start || !end) {
         document.getElementById('rangeResult').textContent = 'Please fill all fields.';
@@ -312,9 +376,12 @@ async function calculateRange() {
     }
 
     try {
-        const res = await fetch(`/api/holidays/range-filtered?countryId=${countryId}&holidayType=${encodeURIComponent(type)}&targetGroup=${encodeURIComponent(sector)}&start=${start}&end=${end}`);
-        if (!res.ok) throw new Error('Tatiller getirilemedi.');
+        const url = `${window.location.origin}/api/holidays/range-filtered?countryId=${countryId}&holidayType=${encodeURIComponent(type)}&targetGroup=${encodeURIComponent(sector)}&start=${start}&end=${end}`;
+        console.log("LOG: Fetching range from URL:", url);
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Range holidays could not be fetched.');
         const holidays = await res.json();
+        console.log("LOG: Fetched range holidays:", holidays);
 
         const holidayDates = new Set(holidays.map(h => h.holidayDate));
         let workDays = 0;
@@ -332,18 +399,25 @@ async function calculateRange() {
         document.getElementById('rangeResult').textContent =
             `${holidays.length} holidays, ${workDays} work days.`;
     } catch (e) {
-        console.error(e);
-        document.getElementById('rangeResult').textContent = 'Hata oluştu.';
+        console.error("ERROR in calculateRange:", e);
+        document.getElementById('rangeResult').textContent = 'An error occurred.';
     }
 }
 
 async function init() {
+    console.log("LOG: init called.");
     await loadTranslations(currentLang);
     initializeCalendar();
 
+    console.log("LOG: Loading initial dropdown data.");
     await Promise.all([loadCountries(), loadSectorTypes(), loadHolidayTypes()]);
-    calendar.refetchEvents();
+    console.log("LOG: Initial data loading complete. Refetching events.");
+    // After dropdowns are loaded, refetch events to show initial data
+    if (calendar) {
+        calendar.refetchEvents();
+    }
     setupEventListeners();
+    console.log("LOG: Initialization finished.");
 }
 
 document.addEventListener('DOMContentLoaded', init);

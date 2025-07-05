@@ -1,0 +1,13 @@
+{
+  "country": "Ülke",
+  "view": "Görünüm",
+  "month": "Aylık",
+  "year": "Yıllık",
+  "type": "Tür",
+  "targetGroup": "Hedef Grup",
+  "start": "Başlangıç",
+  "end": "Bitiş",
+  "calculate": "Aralığı Hesapla",
+  "noHolidays": "Seçim için tatil bulunamadı.",
+  "language": "Dil"
+}

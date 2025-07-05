@@ -9,12 +9,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 @Repository
-
 public interface HolidayDescriptionRepository extends JpaRepository<HolidayDescription, Integer> {
 
     @Query("select new com.tatilsorgulama.api.dto.HolidayDescDto(h.startDate, h.endDate, hd.name, hd.description) " +
-           "from HolidayDescription hd join hd.holiday h " +
-           "where h.country.id = :countryId and hd.languageCode = :lang " +
+           "from HolidayDescription hd join hd.holiday h join hd.language l " +
+           "where h.country.id = :countryId and l.code = :lang " +
            "order by h.startDate")
     List<HolidayDescDto> findByCountryAndLanguage(@Param("countryId") Integer countryId,
                                                   @Param("lang") String languageCode);

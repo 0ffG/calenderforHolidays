@@ -25,9 +25,10 @@ public interface HolidayRepository extends JpaRepository<Holiday, Integer> {
             "join h.targetGroups tg " +
             "join h.holidayType ht " +
             "join h.descriptions hd " +
+            "join hd.language l " +
             "where h.country.id = :countryId " +
             "and tg.code = :groupCode " +
-            "and hd.languageCode = :lang " +
+            "and l.code = :lang " +
             "order by h.startDate")
     List<HolidayEventDto> findEvents(Integer countryId, String groupCode, String lang);
 
