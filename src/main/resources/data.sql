@@ -2,6 +2,17 @@
 -- BÖLÜM 1: TEMEL VERİLER (ÜLKELER, TÜRLER, GRUPLAR)
 -- =================================================================
 
+-- Mevcut verileri temizle. Bu sayede script birden fazla kez
+-- çalıştırıldığında benzersiz kısıtlamalar ihlal edilmez.
+DELETE FROM HOLIDAY_TARGET_GROUPS;
+DELETE FROM HOLIDAY_DESCRIPTIONS;
+DELETE FROM HOLIDAYS;
+DELETE FROM HOLIDAY_TYPE_TRANSLATIONS;
+DELETE FROM TARGET_GROUP_TRANSLATIONS;
+DELETE FROM HOLIDAY_TYPES;
+DELETE FROM TARGET_GROUPS;
+DELETE FROM COUNTRIES;
+
 -- 1.1. Ülkeleri Ekle (Countries)
 INSERT INTO COUNTRIES (id, name, code) VALUES (1, 'Türkiye', 'TR');
 INSERT INTO COUNTRIES (id, name, code) VALUES (2, 'United States of America', 'USA');
