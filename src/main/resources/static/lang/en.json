@@ -1,0 +1,13 @@
+{
+  "country": "Country",
+  "view": "View",
+  "month": "Monthly",
+  "year": "Yearly",
+  "type": "Type",
+  "targetGroup": "Target Group",
+  "start": "Start",
+  "end": "End",
+  "calculate": "Calculate Range",
+  "noHolidays": "No holidays found for selection.",
+  "language": "Language"
+}

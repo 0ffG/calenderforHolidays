@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Tatil Takvimi</title>
@@ -63,28 +63,37 @@
 </head>
 <body>
 <div id="controls">
-    <div style="margin-bottom: 20px;">
-        <label for="country">Ülke:</label>
+    <div style="margin-bottom: 20px; display:flex; gap:10px; align-items:center;">
+        <label for="country" id="lblCountry">Country:</label>
         <select id="country"></select>
 
-        <label for="viewSelect">Görünüm:</label>
+        <label for="viewSelect" id="lblView">View:</label>
         <select id="viewSelect">
-            <option value="dayGridMonth">Aylık</option>
-            <option value="multiMonthYear">Yıllık</option>
+            <option value="dayGridMonth" id="optMonth">Monthly</option>
+            <option value="multiMonthYear" id="optYear">Yearly</option>
+        </select>
+
+        <label for="lang" id="lblLang">Language:</label>
+        <select id="lang">
+            <option value="en">EN</option>
+            <option value="fr">FR</option>
         </select>
     </div>
 
     <div id="calendar" style="margin-bottom: 20px;"></div>
 
-    <div style="margin-bottom: 20px;">
-        <label for="sector">Sektör Tipi:</label>
+    <div style="margin-bottom: 20px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <label for="type" id="lblType">Type:</label>
+        <select id="type"></select>
+
+        <label for="sector" id="lblTarget">Target Group:</label>
         <select id="sector"></select>
 
-        <label for="startDate">Başlangıç:</label>
+        <label for="startDate" id="lblStart">Start:</label>
         <input type="date" id="startDate">
-        <label for="endDate">Bitiş:</label>
+        <label for="endDate" id="lblEnd">End:</label>
         <input type="date" id="endDate">
-        <button id="rangeBtn">Aralığı Hesapla</button>
+        <button id="rangeBtn">Calculate Range</button>
     </div>
 
     <div id="rangeResult" style="margin-top: 10px;"></div>
@@ -97,6 +106,28 @@
 <script>
 // Takvim nesnesini daha geniş bir kapsamda tanımlayalım ki her yerden ulaşılabilsin.
 let calendar;
+let currentLang = 'en';
+let translations = {};
+
+async function loadTranslations(lang) {
+    const res = await fetch(`/lang/${lang}.json`);
+    translations = await res.json();
+    currentLang = lang;
+    document.getElementById('lblCountry').textContent = translations.country + ':';
+    document.getElementById('lblView').textContent = translations.view + ':';
+    document.getElementById('optMonth').textContent = translations.month;
+    document.getElementById('optYear').textContent = translations.year;
+    document.getElementById('lblType').textContent = translations.type + ':';
+    document.getElementById('lblLang').textContent = translations.language + ':';
+    document.getElementById('lblTarget').textContent = translations.targetGroup + ':';
+    document.getElementById('lblStart').textContent = translations.start + ':';
+    document.getElementById('lblEnd').textContent = translations.end + ':';
+    document.getElementById('rangeBtn').textContent = translations.calculate;
+    if (calendar) {
+        calendar.setOption('locale', lang);
+    }
+    loadDescriptions();
+}
 
 async function loadCountries() {
     try {
@@ -118,15 +149,33 @@ async function loadCountries() {
 
 async function loadSectorTypes() {
     try {
-        const res = await fetch('/api/sector-types');
-        if (!res.ok) throw new Error('Sektör tipleri yüklenemedi.');
+        const res = await fetch('/api/target-groups');
+        if (!res.ok) throw new Error('Types load error');
         const types = await res.json();
         const select = document.getElementById('sector');
         select.innerHTML = ''; // Önceki seçenekleri temizle
         types.forEach(t => {
             const opt = document.createElement('option');
-            opt.value = t;
-            opt.textContent = t;
+            opt.value = t.code;
+            opt.textContent = t.code;
+            select.appendChild(opt);
+        });
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+async function loadHolidayTypes() {
+    try {
+        const res = await fetch('/api/holiday-types');
+        if (!res.ok) throw new Error('type err');
+        const types = await res.json();
+        const select = document.getElementById('type');
+        select.innerHTML = '';
+        types.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t.code;
+            opt.textContent = t.code;
             select.appendChild(opt);
         });
     } catch (e) {
@@ -144,24 +193,46 @@ function initializeCalendar() {
         },
         events: fetchEvents,
         eventClick: showDetails,
-        locale: 'tr'
+        locale: currentLang
     });
     calendar.render();
 }
 
+async function loadDescriptions() {
+    const countryId = document.getElementById('country').value;
+    if (!countryId) {
+        document.getElementById('holidaySummary').innerHTML = '';
+        return;
+    }
+    try {
+        const res = await fetch(`/api/holidays/descriptions?countryId=${countryId}&language=${currentLang}`);
+        if (!res.ok) throw new Error('desc');
+        const list = await res.json();
+        const items = list.map(d => {
+            const dateStr = new Date(d.startDate).toLocaleDateString(currentLang);
+            return `<li>${dateStr} - <strong>${d.name}</strong>: ${d.description}</li>`;
+        }).join('');
+        document.getElementById('holidaySummary').innerHTML = `<ul>${items}</ul>`;
+    } catch (e) {
+        console.error(e);
+    }
+}
+
 function setupEventListeners() {
-    // Ülke veya Sektör filtresi değiştiğinde takvimi yenile
     ['country', 'sector'].forEach(id => {
         document.getElementById(id).addEventListener('change', () => {
-            // Tarayıcı konsolunda bu mesajı görüyorsanız, filtre çalışıyor demektir.
-            console.log(`${id} filtresi değişti. Takvim yenileniyor...`);
             if (calendar) {
                 calendar.refetchEvents();
             }
+            if (id === 'country') loadDescriptions();
         });
     });
 
-    // Görünüm (Aylık/Yıllık) filtresi değiştiğinde takvimin görünümünü değiştir
+    document.getElementById('lang').addEventListener('change', e => {
+        loadTranslations(e.target.value);
+    });
+
+    // Change calendar view when selection changes
     document.getElementById('viewSelect').addEventListener('change', (event) => {
         if (calendar) {
             calendar.changeView(event.target.value);
@@ -178,12 +249,12 @@ async function fetchEvents(fetchInfo, successCallback, failureCallback) {
 
         // Eğer filtrelerden biri boşsa (veri henüz yüklenmediyse) tatil getirme
         if (!countryId || !sector) {
-            successCallback([]); // Boş bir dizi gönder
+            successCallback([]);
             updateSummary([]);
             return;
         }
 
-        const res = await fetch(`/api/holidays/filter-by-sector?countryId=${countryId}&sectorType=${encodeURIComponent(sector)}`);
+        const res = await fetch(`/api/holidays/filter?countryId=${countryId}&targetGroup=${encodeURIComponent(sector)}`);
         if (!res.ok) throw new Error('Tatiller getirilemedi.');
         
         const holidays = await res.json();
@@ -205,11 +276,11 @@ async function fetchEvents(fetchInfo, successCallback, failureCallback) {
 function updateSummary(events) {
     const summary = document.getElementById('holidaySummary');
     if (events.length === 0) {
-        summary.textContent = 'Seçili kriterlere göre tatil bulunamadı.';
+        summary.textContent = translations.noHolidays;
         return;
     }
     const items = events.map(ev => {
-        const dateStr = new Date(ev.start).toLocaleDateString('tr-TR', { day: '2-digit', month: 'long', year: 'numeric' });
+        const dateStr = new Date(ev.start).toLocaleDateString(currentLang, { day: '2-digit', month: 'long', year: 'numeric' });
         return `<li>${dateStr} - ${ev.title}</li>`;
     }).join('');
     summary.innerHTML = `<ul>${items}</ul>`;
@@ -217,13 +288,13 @@ function updateSummary(events) {
 
 function showDetails(info) {
     const h = info.event.extendedProps;
-    const dateStr = new Date(h.holidayDate).toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const dateStr = new Date(h.holidayDate).toLocaleDateString(currentLang, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     const details = `
         <h3>${h.holidayName}</h3>
-        <p><strong>Türü:</strong> ${h.holidayType}</p>
-        <p><strong>Tarih:</strong> ${dateStr}</p>
-        <p><strong>Süre:</strong> ${h.durationDays} gün</p>
-        <p><strong>Geçerli Sektör:</strong> ${h.appliesToSector}</p>
+        <p><strong>Type:</strong> ${h.holidayType}</p>
+        <p><strong>Date:</strong> ${dateStr}</p>
+        <p><strong>Duration:</strong> ${h.durationDays} days</p>
+        <p><strong>Target:</strong> ${h.appliesToSector}</p>
     `;
     document.getElementById('holidayDetails').innerHTML = details;
 }
@@ -231,16 +302,17 @@ function showDetails(info) {
 async function calculateRange() {
     const countryId = document.getElementById('country').value;
     const sector = document.getElementById('sector').value;
+    const type = document.getElementById('type').value;
     const start = document.getElementById('startDate').value;
     const end = document.getElementById('endDate').value;
 
-    if (!countryId || !sector || !start || !end) {
-        document.getElementById('rangeResult').textContent = 'Lütfen tüm alanları doldurun.';
+    if (!countryId || !sector || !type || !start || !end) {
+        document.getElementById('rangeResult').textContent = 'Please fill all fields.';
         return;
     }
 
     try {
-        const res = await fetch(`/api/holidays/range?countryId=${countryId}&sectorType=${encodeURIComponent(sector)}&start=${start}&end=${end}`);
+        const res = await fetch(`/api/holidays/range-filtered?countryId=${countryId}&holidayType=${encodeURIComponent(type)}&targetGroup=${encodeURIComponent(sector)}&start=${start}&end=${end}`);
         if (!res.ok) throw new Error('Tatiller getirilemedi.');
         const holidays = await res.json();
 
@@ -258,7 +330,7 @@ async function calculateRange() {
         }
 
         document.getElementById('rangeResult').textContent =
-            `Toplam ${holidays.length} tatil günü, ${workDays} iş günü.`;
+            `${holidays.length} holidays, ${workDays} work days.`;
     } catch (e) {
         console.error(e);
         document.getElementById('rangeResult').textContent = 'Hata oluştu.';
@@ -266,16 +338,11 @@ async function calculateRange() {
 }
 
 async function init() {
-    // 1. Önce takvimi ekrana çiz.
+    await loadTranslations(currentLang);
     initializeCalendar();
-    
-    // 2. Sonra filtreler için gerekli verileri (ülke, sektör) yükle.
-    await Promise.all([loadCountries(), loadSectorTypes()]);
-    
-    // 3. Veriler yüklendikten sonra, takvimin ilk verilerini getirmesi için onu tetikle.
-    calendar.refetchEvents();
 
-    // 4. Son olarak, filtrelerin değişikliklerini dinleyecek olan kodları çalıştır.
+    await Promise.all([loadCountries(), loadSectorTypes(), loadHolidayTypes()]);
+    calendar.refetchEvents();
     setupEventListeners();
 }
 

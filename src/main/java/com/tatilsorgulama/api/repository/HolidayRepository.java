@@ -23,4 +23,15 @@ public interface HolidayRepository extends JpaRepository<Holiday, Integer> {
                                                          String groupCode,
                                                          LocalDate startDate,
                                                          LocalDate endDate);
+
+    @Query("select distinct h from Holiday h join h.targetGroups tg " +
+            "where h.country.id = :countryId " +
+            "and tg.code = :groupCode " +
+            "and h.holidayType.code = :typeCode " +
+            "and h.startDate between :startDate and :endDate")
+    List<Holiday> findByCountryTypeGroupAndDateBetween(Integer countryId,
+                                                       String typeCode,
+                                                       String groupCode,
+                                                       LocalDate startDate,
+                                                       LocalDate endDate);
 }

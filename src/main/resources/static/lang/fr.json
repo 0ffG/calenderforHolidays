@@ -1,0 +1,13 @@
+{
+  "country": "Pays",
+  "view": "Vue",
+  "month": "Mensuel",
+  "year": "Annuel",
+  "type": "Type",
+  "targetGroup": "Groupe cible",
+  "start": "Début",
+  "end": "Fin",
+  "calculate": "Calculer",
+  "noHolidays": "Aucun jour férié trouvé.",
+  "language": "Langue"
+}
