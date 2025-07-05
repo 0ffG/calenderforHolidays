@@ -4,54 +4,23 @@ import com.tatilsorgulama.api.entity.Holiday;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
 import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public interface HolidayRepository extends JpaRepository<Holiday, Integer> {
 
-    // ... diğer metotlarınız ...
-    List<Holiday> findByCountry_CountryIdAndHolidayDate(Integer countryId, LocalDate date);
-    List<Holiday> findByCountry_CountryId(Integer countryId);
+    List<Holiday> findByCountry_Id(Integer countryId);
 
-    /**
-     * Finds holidays for employees matching sector and employee type in a given country.
-     */
-    @Query(
-            "select distinct h from Holiday h " +
-                    "join h.country c " +
-                    "join Employee e on e.country = c " +
-                    "where c.countryId = :countryId " +
-                    "and e.sectorType = :sectorType " +
-                    "and e.employeeType.employeeTypeId = :employeeTypeId")
-    List<Holiday> findByCountryAndSectorAndEmployeeType(Integer countryId,
-                                                        String sectorType,
-                                                        Integer employeeTypeId);
+    List<Holiday> findByCountry_IdAndStartDate(Integer countryId, LocalDate startDate);
 
-    // YENİ METOT: Sadece ülke ve sektöre göre arama yapar
-    /**
-     * Finds holidays for employees matching sector in a given country.
-     */
-    @Query(
-            "select distinct h from Holiday h " +
-            "join h.country c " +
-            "join Employee e on e.country = c " +
-            "where c.countryId = :countryId " +
-            "and e.sectorType = :sectorType")
-    List<Holiday> findByCountryAndSector(Integer countryId, String sectorType);
+    @Query("select distinct h from Holiday h join h.targetGroups tg where h.country.id = :countryId and tg.code = :groupCode")
+    List<Holiday> findByCountryAndTargetGroup(Integer countryId, String groupCode);
 
-    /**
-     * Lists holidays in a given country and sector between two dates.
-     */
-    @Query(
-            "select distinct h from Holiday h " +
-            "join h.country c " +
-            "join Employee e on e.country = c " +
-            "where c.countryId = :countryId " +
-            "and e.sectorType = :sectorType " +
-            "and h.holidayDate between :startDate and :endDate")
-    List<Holiday> findByCountrySectorAndDateBetween(Integer countryId,
-                                                   String sectorType,
-                                                   LocalDate startDate,
-                                                   LocalDate endDate);
+    @Query("select distinct h from Holiday h join h.targetGroups tg where h.country.id = :countryId and tg.code = :groupCode and h.startDate between :startDate and :endDate")
+    List<Holiday> findByCountryTargetGroupAndDateBetween(Integer countryId,
+                                                         String groupCode,
+                                                         LocalDate startDate,
+                                                         LocalDate endDate);
 }

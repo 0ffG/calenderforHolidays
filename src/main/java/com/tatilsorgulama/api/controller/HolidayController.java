@@ -17,67 +17,48 @@ public class HolidayController {
 
     private final HolidayRepository holidayRepository;
 
-    // Örnek: /api/holidays?countryId=1
-    // Belirli bir ülkedeki tüm tatilleri listeler
+    // Lists all holidays for a given country
     @GetMapping
     public ResponseEntity<List<Holiday>> getHolidaysByCountry(@RequestParam Integer countryId) {
-        List<Holiday> holidays = holidayRepository.findByCountry_CountryId(countryId);
+        List<Holiday> holidays = holidayRepository.findByCountry_Id(countryId);
         return ResponseEntity.ok(holidays);
     }
 
-    // Örnek: /api/holidays/query?countryId=1&date=2025-10-29
-    // Belirli bir ülkedeki ve belirli bir tarihteki tatilleri sorgular
+    // Example: /api/holidays/query?countryId=1&date=2025-10-29
+    // Queries holidays for a given country and date
     @GetMapping("/query")
     public ResponseEntity<List<Holiday>> queryHolidays(
             @RequestParam Integer countryId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
-        List<Holiday> holidays = holidayRepository.findByCountry_CountryIdAndHolidayDate(countryId, date);
+        List<Holiday> holidays = holidayRepository.findByCountry_IdAndStartDate(countryId, date);
         if (holidays.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(holidays);
     }
 
-    // Örnek: /api/holidays/filter?countryId=1&sectorType=Public&employeeTypeId=2
-    // Seçilen ülke, sektör ve çalışan tipine uygun tatilleri listeler
+    // Filters holidays by country and target group code
     @GetMapping("/filter")
     public ResponseEntity<List<Holiday>> filterHolidays(
             @RequestParam Integer countryId,
-            @RequestParam String sectorType,
-            @RequestParam Integer employeeTypeId) {
+            @RequestParam String targetGroup) {
         List<Holiday> holidays = holidayRepository
-                .findByCountryAndSectorAndEmployeeType(countryId, sectorType, employeeTypeId);
+                .findByCountryAndTargetGroup(countryId, targetGroup);
         return ResponseEntity.ok(holidays);
     }
     
-    // YENİ EKLENEN ENDPOINT
-    /**
-     * Sadece ülke ve sektöre göre tatilleri listeler.
-     * Örnek: /api/holidays/filter-by-sector?countryId=1&sectorType=Public
-     */
-    @GetMapping("/filter-by-sector")
-    public ResponseEntity<List<Holiday>> filterHolidaysBySector(
-            @RequestParam Integer countryId,
-            @RequestParam String sectorType) {
-        // Repository'de oluşturduğumuz yeni metodu çağırıyoruz.
-        List<Holiday> holidays = holidayRepository.findByCountryAndSector(countryId, sectorType);
-        return ResponseEntity.ok(holidays);
-    }
+    // Lists holidays between two dates for a given country and target group
 
-    /**
-     * Lists holidays between two dates for a given country and sector.
-     * Example: /api/holidays/range?countryId=1&sectorType=Public&start=2024-01-01&end=2024-12-31
-     */
     @GetMapping("/range")
     public ResponseEntity<List<Holiday>> getHolidaysInRange(
             @RequestParam Integer countryId,
-            @RequestParam String sectorType,
+            @RequestParam String targetGroup,
             @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
         List<Holiday> holidays = holidayRepository
-                .findByCountrySectorAndDateBetween(countryId, sectorType, startDate, endDate);
+                .findByCountryTargetGroupAndDateBetween(countryId, targetGroup, startDate, endDate);
         return ResponseEntity.ok(holidays);
     }
 
