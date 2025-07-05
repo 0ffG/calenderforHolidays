@@ -2,6 +2,8 @@ package com.tatilsorgulama.api.controller;
 
 import com.tatilsorgulama.api.entity.Holiday;
 import com.tatilsorgulama.api.repository.HolidayRepository;
+import com.tatilsorgulama.api.dto.HolidayDescDto;
+import com.tatilsorgulama.api.repository.HolidayDescriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import java.util.List;
 public class HolidayController {
 
     private final HolidayRepository holidayRepository;
+    private final HolidayDescriptionRepository descriptionRepository;
 
     // Lists all holidays for a given country
     @GetMapping
@@ -60,6 +63,29 @@ public class HolidayController {
         List<Holiday> holidays = holidayRepository
                 .findByCountryTargetGroupAndDateBetween(countryId, targetGroup, startDate, endDate);
         return ResponseEntity.ok(holidays);
+    }
+
+    // Range query with holiday type and target group
+    @GetMapping("/range-filtered")
+    public ResponseEntity<List<Holiday>> getHolidaysInRangeFiltered(
+            @RequestParam Integer countryId,
+            @RequestParam String holidayType,
+            @RequestParam String targetGroup,
+            @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        List<Holiday> holidays = holidayRepository
+                .findByCountryTypeGroupAndDateBetween(countryId, holidayType, targetGroup, startDate, endDate);
+        return ResponseEntity.ok(holidays);
+    }
+
+    // Returns holiday descriptions for a country and language
+    @GetMapping("/descriptions")
+    public ResponseEntity<List<HolidayDescDto>> getHolidayDescriptions(
+            @RequestParam Integer countryId,
+            @RequestParam String language) {
+        List<HolidayDescDto> list = descriptionRepository.findByCountryAndLanguage(countryId, language);
+        return ResponseEntity.ok(list);
     }
 
     // Örnek: POST isteği ile /api/holidays adresine JSON formatında yeni tatil bilgisi göndermek
