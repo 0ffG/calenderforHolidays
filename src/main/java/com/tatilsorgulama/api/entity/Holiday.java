@@ -1,6 +1,7 @@
 package com.tatilsorgulama.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,5 +51,6 @@ public class Holiday {
     private List<TargetGroup> targetGroups;
 
     @OneToMany(mappedBy = "holiday")
+    @JsonManagedReference
     private List<HolidayDescription> descriptions;
 }
