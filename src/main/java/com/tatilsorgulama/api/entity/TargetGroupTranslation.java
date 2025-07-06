@@ -3,7 +3,6 @@ package com.tatilsorgulama.api.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "TARGET_GROUP_TRANSLATIONS", uniqueConstraints = {
@@ -19,7 +18,6 @@ public class TargetGroupTranslation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TARGET_GROUP_ID")
-    @JsonBackReference
     private TargetGroup targetGroup;
 
     @ManyToOne(fetch = FetchType.LAZY)

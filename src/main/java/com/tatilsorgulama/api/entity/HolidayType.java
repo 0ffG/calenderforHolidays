@@ -3,7 +3,6 @@ package com.tatilsorgulama.api.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.List;
 
@@ -21,6 +20,5 @@ public class HolidayType {
     private String code;
 
     @OneToMany(mappedBy = "holidayType")
-    @JsonManagedReference
     private List<HolidayTypeTranslation> translations;
 }
