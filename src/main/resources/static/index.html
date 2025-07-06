@@ -84,11 +84,10 @@
     <div id="calendar" style="margin-bottom: 20px;"></div>
 
     <div style="margin-bottom: 20px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-        <label for="type" id="lblType">Type:</label>
-        <select id="type"></select>
-
         <label for="sector" id="lblTarget">Target Group:</label>
-        <select id="sector"></select>
+        <select id="sector">
+            <option value="" id="optAllSector">All</option>
+        </select>
 
         <label for="startDate" id="lblStart">Start:</label>
         <input type="date" id="startDate">
@@ -138,9 +137,9 @@ async function loadTranslations(lang) {
         document.getElementById('lblView').textContent = translations.view + ':';
         document.getElementById('optMonth').textContent = translations.month;
         document.getElementById('optYear').textContent = translations.year;
-        document.getElementById('lblType').textContent = translations.type + ':';
         document.getElementById('lblLang').textContent = translations.language + ':';
         document.getElementById('lblTarget').textContent = translations.targetGroup + ':';
+        document.getElementById('optAllSector').textContent = translations.all || 'All';
         document.getElementById('lblStart').textContent = translations.start + ':';
         document.getElementById('lblEnd').textContent = translations.end + ':';
         document.getElementById('rangeBtn').textContent = translations.calculate;
@@ -186,7 +185,7 @@ async function loadSectorTypes() {
         const types = await res.json();
         console.log("LOG: Fetched target groups:", types);
         const select = document.getElementById('sector');
-        select.innerHTML = '';
+        select.innerHTML = '<option value="" id="optAllSector">All</option>';
         types.forEach(t => {
             const opt = document.createElement('option');
             opt.value = t.code;
@@ -196,28 +195,6 @@ async function loadSectorTypes() {
         console.log("LOG: Sector dropdown populated.");
     } catch (e) {
         console.error("ERROR in loadSectorTypes:", e);
-    }
-}
-
-async function loadHolidayTypes() {
-    console.log("LOG: loadHolidayTypes called.");
-    try {
-        const res = await fetch(`${window.location.origin}/api/holiday-types`);
-        console.log("LOG: /api/holiday-types response status:", res.status);
-        if (!res.ok) throw new Error('Holiday types could not be loaded.');
-        const types = await res.json();
-        console.log("LOG: Fetched holiday types:", types);
-        const select = document.getElementById('type');
-        select.innerHTML = '';
-        types.forEach(t => {
-            const opt = document.createElement('option');
-            opt.value = t.code;
-            opt.textContent = t.code;
-            select.appendChild(opt);
-        });
-        console.log("LOG: Holiday Type dropdown populated.");
-    } catch (e) {
-        console.error("ERROR in loadHolidayTypes:", e);
     }
 }
 
@@ -302,34 +279,57 @@ async function fetchEvents(fetchInfo, successCallback, failureCallback) {
         const sector = document.getElementById('sector').value;
         console.log(`LOG: fetchEvents params - countryId: ${countryId}, targetGroup: ${sector}, lang: ${currentLang}`);
 
-        if (!countryId || !sector) {
-            console.log("LOG: Missing country or sector. Returning empty array.");
+        if (!countryId) {
+            console.log("LOG: No country selected. Returning empty array.");
             successCallback([]);
             updateSummary([]);
             return;
         }
 
-        const url = `${window.location.origin}/api/holidays/filter?countryId=${countryId}&targetGroup=${encodeURIComponent(sector)}&lang=${currentLang}`;
-        console.log("LOG: Fetching events from URL:", url);
-        const res = await fetch(url);
-        console.log("LOG: /api/holidays/filter response status:", res.status);
-        if (!res.ok) throw new Error('Holidays could not be fetched.');
-        
-        const holidays = await res.json();
-        console.log("LOG: Fetched holidays raw data:", holidays);
-        
-        const events = holidays.map(h => {
-            return {
-                title: `${h.holidayName} (${h.appliesToSector})`,
-                start: h.holidayDate,
-                // FullCalendar's 'end' date is exclusive. If an event has a duration of 3 days,
-                // starting on '2025-03-31', it occupies Mar 31, Apr 1, and Apr 2.
-                // The 'end' property must be '2025-04-03'.
-                // Our `addDaysToDateString` function correctly calculates this.
-                end: h.durationDays > 1 ? addDaysToDateString(h.holidayDate, h.durationDays) : null,
-                extendedProps: h
-            };
-        });
+        let events = [];
+        if (!sector) {
+            const url = `${window.location.origin}/api/holidays/descriptions?countryId=${countryId}&language=${currentLang}`;
+            console.log("LOG: Fetching events (all sectors) from URL:", url);
+            const res = await fetch(url);
+            console.log("LOG: /api/holidays/descriptions response status:", res.status);
+            if (!res.ok) throw new Error('Holidays could not be fetched.');
+            const list = await res.json();
+            console.log("LOG: Fetched holiday descriptions:", list);
+            events = list.map(h => {
+                const start = h.startDate;
+                const end = h.endDate || h.startDate;
+                const duration = Math.floor((new Date(end + 'T00:00:00Z') - new Date(start + 'T00:00:00Z')) / 86400000) + 1;
+                return {
+                    title: h.name,
+                    start: start,
+                    end: duration > 1 ? addDaysToDateString(start, duration) : null,
+                    extendedProps: {
+                        holidayName: h.name,
+                        holidayDate: start,
+                        durationDays: duration,
+                        description: h.description
+                    }
+                };
+            });
+        } else {
+            const url = `${window.location.origin}/api/holidays/filter?countryId=${countryId}&targetGroup=${encodeURIComponent(sector)}&lang=${currentLang}`;
+            console.log("LOG: Fetching events from URL:", url);
+            const res = await fetch(url);
+            console.log("LOG: /api/holidays/filter response status:", res.status);
+            if (!res.ok) throw new Error('Holidays could not be fetched.');
+
+            const holidays = await res.json();
+            console.log("LOG: Fetched holidays raw data:", holidays);
+
+            events = holidays.map(h => {
+                return {
+                    title: `${h.holidayName} (${h.appliesToSector})`,
+                    start: h.holidayDate,
+                    end: h.durationDays > 1 ? addDaysToDateString(h.holidayDate, h.durationDays) : null,
+                    extendedProps: h
+                };
+            });
+        }
 
         console.log("LOG: Mapped events for calendar:", events);
         updateSummary(events);
@@ -351,13 +351,20 @@ function showDetails(info) {
     console.log("LOG: showDetails called for event:", info.event);
     const h = info.event.extendedProps;
     const dateStr = new Date(h.holidayDate).toLocaleDateString(currentLang, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    const details = `
-        <h3>${h.holidayName}</h3>
-        <p><strong>Type:</strong> ${h.holidayType}</p>
-        <p><strong>Date:</strong> ${dateStr}</p>
-        <p><strong>Duration:</strong> ${h.durationDays} days</p>
-        <p><strong>Target:</strong> ${h.appliesToSector}</p>
-    `;
+    let details = `<h3>${h.holidayName}</h3>`;
+    if (h.holidayType) {
+        details += `<p><strong>Type:</strong> ${h.holidayType}</p>`;
+    }
+    details += `<p><strong>Date:</strong> ${dateStr}</p>`;
+    if (h.durationDays) {
+        details += `<p><strong>Duration:</strong> ${h.durationDays} days</p>`;
+    }
+    if (h.appliesToSector) {
+        details += `<p><strong>Target:</strong> ${h.appliesToSector}</p>`;
+    }
+    if (h.description) {
+        details += `<p>${h.description}</p>`;
+    }
     document.getElementById('holidayDetails').innerHTML = details;
 }
 
@@ -365,18 +372,17 @@ async function calculateRange() {
     console.log("LOG: calculateRange called.");
     const countryId = document.getElementById('country').value;
     const sector = document.getElementById('sector').value;
-    const type = document.getElementById('type').value;
     const start = document.getElementById('startDate').value;
     const end = document.getElementById('endDate').value;
-    console.log(`LOG: calculateRange params - countryId: ${countryId}, sector: ${sector}, type: ${type}, start: ${start}, end: ${end}`);
+    console.log(`LOG: calculateRange params - countryId: ${countryId}, sector: ${sector}, start: ${start}, end: ${end}`);
 
-    if (!countryId || !sector || !type || !start || !end) {
+    if (!countryId || !sector || !start || !end) {
         document.getElementById('rangeResult').textContent = 'Please fill all fields.';
         return;
     }
 
     try {
-        const url = `${window.location.origin}/api/holidays/range-filtered?countryId=${countryId}&holidayType=${encodeURIComponent(type)}&targetGroup=${encodeURIComponent(sector)}&start=${start}&end=${end}`;
+        const url = `${window.location.origin}/api/holidays/range?countryId=${countryId}&targetGroup=${encodeURIComponent(sector)}&start=${start}&end=${end}`;
         console.log("LOG: Fetching range from URL:", url);
         const res = await fetch(url);
         if (!res.ok) throw new Error('Range holidays could not be fetched.');
@@ -410,7 +416,7 @@ async function init() {
     initializeCalendar();
 
     console.log("LOG: Loading initial dropdown data.");
-    await Promise.all([loadCountries(), loadSectorTypes(), loadHolidayTypes()]);
+    await Promise.all([loadCountries(), loadSectorTypes()]);
     console.log("LOG: Initial data loading complete. Refetching events.");
     // After dropdowns are loaded, refetch events to show initial data
     if (calendar) {
