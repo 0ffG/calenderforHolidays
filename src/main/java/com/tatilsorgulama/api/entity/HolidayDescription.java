@@ -3,6 +3,7 @@ package com.tatilsorgulama.api.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "HOLIDAY_DESCRIPTIONS", uniqueConstraints = {
@@ -18,6 +19,7 @@ public class HolidayDescription {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "HOLIDAY_ID")
+    @JsonBackReference
     private Holiday holiday;
 
     @ManyToOne(fetch = FetchType.LAZY)
