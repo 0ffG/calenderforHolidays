@@ -1,5 +1,7 @@
 package com.tatilsorgulama.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +12,7 @@ import lombok.Setter;
 })
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class TargetGroupTranslation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +21,7 @@ public class TargetGroupTranslation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TARGET_GROUP_ID")
+    @JsonIgnore
     private TargetGroup targetGroup;
 
     @ManyToOne(fetch = FetchType.LAZY)

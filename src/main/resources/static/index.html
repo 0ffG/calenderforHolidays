@@ -2,105 +2,333 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Tatil Takvimi</title>
+    <title>🏖️ Tatil Takvimi | Holiday Calendar</title>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background: linear-gradient(to right, #f8fbff, #e0eafc);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
         }
 
         #controls {
-            margin-bottom: 20px;
-            background: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e1e8ed;
         }
 
-        #controls label {
-            margin-right: 5px;
-            font-weight: bold;
+        .control-row {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #6c757d;
+            padding: 12px 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(108, 117, 125, 0.15);
+            transition: all 0.2s ease;
+        }
+
+        .control-group:hover {
+            box-shadow: 0 3px 8px rgba(108, 117, 125, 0.2);
+        }
+
+        .control-group.blue {
+            background: #6c757d;
+        }
+
+        .control-group.green {
+            background: #6c757d;
+        }
+
+        .control-group.orange {
+            background: #6c757d;
+        }
+
+        .control-group.purple {
+            background: #6c757d;
+        }
+
+        .control-group label {
+            color: white;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        select, input {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 15px;
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        select:focus, input:focus {
+            background: white;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.3);
+            transform: scale(1.02);
         }
 
         #rangeBtn {
-            background-color: #007bff;
-            color: #fff;
+            background: #6c757d;
+            color: white;
             border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 500;
             cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(108, 117, 125, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         #rangeBtn:hover {
-            background-color: #0056b3;
+            box-shadow: 0 3px 8px rgba(108, 117, 125, 0.2);
         }
 
         #calendar {
-            background-color: #fff;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
         }
 
         .fc-daygrid-day.fc-day-today {
-            background-color: #ffe4e1;
+            background: linear-gradient(45deg, #ffecd2 0%, #fcb69f 100%) !important;
+        }
+
+        .fc-event {
+            border-radius: 8px !important;
+            font-weight: 500 !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
         }
 
         #holidayDetails {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            border-radius: 5px;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-top: 25px;
         }
 
         #holidaySummary {
-            margin-bottom: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        #holidaySummary ul {
+            list-style: none;
+        }
+
+        #holidaySummary li {
+            background: #f8f9fa;
+            color: #333;
+            padding: 12px 18px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            transition: all 0.2s ease;
+        }
+
+        #holidaySummary li:hover {
+            background: #e9ecef;
+        }
+
+        #holidaySummary .date {
+            color: #007bff;
+            font-weight: 600;
+        }
+
+        #rangeResult {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .control-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .control-group {
+                justify-content: center;
+                text-align: center;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            body {
+                padding: 10px;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #764ba2, #667eea);
         }
     </style>
 </head>
 <body>
-<div id="controls">
-    <div style="margin-bottom: 20px; display:flex; gap:10px; align-items:center;">
-        <label for="country" id="lblCountry">Country:</label>
-        <select id="country"></select>
+<div class="container">
+    <!-- Controls Section -->
+    <div id="controls">
+        <!-- First Row: Basic Settings -->
+        <div class="control-row">
+            <div class="control-group">
+                <label for="country" id="lblCountry"><i class="fas fa-globe"></i> Country:</label>
+                <select id="country"></select>
+            </div>
 
-        <label for="viewSelect" id="lblView">View:</label>
-        <select id="viewSelect">
-            <option value="dayGridMonth" id="optMonth">Monthly</option>
-            <option value="multiMonthYear" id="optYear">Yearly</option>
-        </select>
+            <div class="control-group blue">
+                <label for="viewSelect" id="lblView"><i class="fas fa-eye"></i> View:</label>
+                <select id="viewSelect">
+                    <option value="dayGridMonth" id="optMonth">Monthly</option>
+                    <option value="multiMonthYear" id="optYear">Yearly</option>
+                </select>
+            </div>
 
-        <label for="lang" id="lblLang">Language:</label>
-        <select id="lang">
-            <option value="en">EN</option>
-            <option value="fr">FR</option>
-            <option value="tr">TR</option>
-        </select>
+            <div class="control-group green">
+                <label for="lang" id="lblLang"><i class="fas fa-language"></i> Language:</label>
+                <select id="lang">
+                    <option value="en">🇬🇧 EN</option>
+                    <option value="fr">🇫🇷 FR</option>
+                    <option value="tr">🇹🇷 TR</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Second Row: Filtering & Date Range -->
+        <div class="control-row">
+            <div class="control-group orange">
+                <label for="sector" id="lblTarget"><i class="fas fa-users"></i> Target Group:</label>
+                <select id="sector">
+                    <option value="" id="optAllSector">All</option>
+                </select>
+            </div>
+
+            <div class="control-group purple">
+                <label for="startDate" id="lblStart"><i class="fas fa-calendar-day"></i> Start:</label>
+                <input type="date" id="startDate">
+            </div>
+
+            <div class="control-group purple">
+                <label for="endDate" id="lblEnd"><i class="fas fa-calendar-check"></i> End:</label>
+                <input type="date" id="endDate">
+            </div>
+
+            <button id="rangeBtn">
+                <i class="fas fa-calculator"></i>
+                <span>Calculate Range</span>
+            </button>
+        </div>
+
+        <div id="rangeResult">        </div>
     </div>
 
-    <div id="calendar" style="margin-bottom: 20px;"></div>
+    <!-- Calendar Section -->
+    <div id="calendar"></div>
 
-    <div style="margin-bottom: 20px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-        <label for="sector" id="lblTarget">Target Group:</label>
-        <select id="sector">
-            <option value="" id="optAllSector">All</option>
-        </select>
-
-        <label for="startDate" id="lblStart">Start:</label>
-        <input type="date" id="startDate">
-        <label for="endDate" id="lblEnd">End:</label>
-        <input type="date" id="endDate">
-        <button id="rangeBtn">Calculate Range</button>
+    <!-- Holiday Summary Section -->
+    <!-- <div id="holidaySummary"></div> -->
+    
+    <!-- Holiday Details Section -->
+    <div id="holidayDetails">
+        <span id="holidayDetailsHint">
+            <span lang="en">Click a day on the calendar to see details.</span>
+            <span lang="tr" style="display:none">Takvimdeki bir güne tıklayarak detayları görebilirsiniz.</span>
+            <span lang="fr" style="display:none">Cliquez sur un jour du calendrier pour voir les détails.</span>
+        </span>
     </div>
-
-    <div id="rangeResult" style="margin-top: 10px;"></div>
 </div>
-
-<div id="holidaySummary" style="margin-top: 20px;"></div>
-<div id="holidayDetails" style="margin-top: 20px;"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script>
@@ -139,7 +367,6 @@ async function loadTranslations(lang) {
         document.getElementById('optYear').textContent = translations.year;
         document.getElementById('lblLang').textContent = translations.language + ':';
         document.getElementById('lblTarget').textContent = translations.targetGroup + ':';
-        document.getElementById('optAllSector').textContent = translations.all || 'All';
         document.getElementById('lblStart').textContent = translations.start + ':';
         document.getElementById('lblEnd').textContent = translations.end + ':';
         document.getElementById('rangeBtn').textContent = translations.calculate;
@@ -147,8 +374,17 @@ async function loadTranslations(lang) {
             console.log("LOG: Setting calendar locale to:", lang);
             calendar.setOption('locale', lang);
         }
+        // Holiday details hint language switch
+        const hint = document.getElementById('holidayDetailsHint');
+        if (hint) {
+            hint.querySelectorAll('span[lang]').forEach(el => {
+                el.style.display = (el.getAttribute('lang') === lang) ? '' : 'none';
+            });
+        }
         // Reload descriptions for the new language
         loadDescriptions();
+        // Reload target groups for the new language
+        loadSectorTypes();
     } catch (e) {
         console.error("ERROR in loadTranslations:", e);
     }
@@ -179,17 +415,21 @@ async function loadCountries() {
 async function loadSectorTypes() {
     console.log("LOG: loadSectorTypes called.");
     try {
-        const res = await fetch(`${window.location.origin}/api/target-groups`);
+        const res = await fetch(`${window.location.origin}/api/target-groups?lang=${currentLang}`);
         console.log("LOG: /api/target-groups response status:", res.status);
         if (!res.ok) throw new Error('Target groups could not be loaded.');
         const types = await res.json();
         console.log("LOG: Fetched target groups:", types);
         const select = document.getElementById('sector');
-        select.innerHTML = '<option value="" id="optAllSector">All</option>';
+        
+        // "All" seçeneğini çevirilerden al
+        const allText = translations && translations.all ? translations.all : 'All';
+        select.innerHTML = `<option value="" id="optAllSector">${allText}</option>`;
+        
         types.forEach(t => {
             const opt = document.createElement('option');
             opt.value = t.code;
-            opt.textContent = t.code;
+            opt.textContent = t.name; // name kullan, code değil!
             select.appendChild(opt);
         });
         console.log("LOG: Sector dropdown populated.");
@@ -204,6 +444,7 @@ function initializeCalendar() {
     calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         height: 650,
+        firstDay: 1, // Haftayı Pazartesi'den başlat
         views: {
             multiMonthYear: { type: 'multiMonth', duration: { months: 12 } }
         },
@@ -218,22 +459,48 @@ function initializeCalendar() {
 async function loadDescriptions() {
     console.log("LOG: loadDescriptions called.");
     const countryId = document.getElementById('country').value;
-    console.log(`LOG: Loading descriptions for countryId: ${countryId}, lang: ${currentLang}`);
+    const sector = document.getElementById('sector').value;
+    console.log(`LOG: Loading descriptions for countryId: ${countryId}, sector: ${sector}, lang: ${currentLang}`);
     if (!countryId) {
         console.log("LOG: No country selected, clearing holiday summary.");
         document.getElementById('holidaySummary').innerHTML = '';
         return;
     }
     try {
-        const url = `${window.location.origin}/api/holidays/descriptions?countryId=${countryId}&language=${currentLang}`;
+        let url, list;
+        if (!sector) {
+            // Tüm tatiller
+            url = `${window.location.origin}/api/holidays/descriptions?countryId=${countryId}&language=${currentLang}`;
+        } else {
+            // Seçilen target group'a göre tatiller
+            url = `${window.location.origin}/api/holidays/filter?countryId=${countryId}&targetGroup=${encodeURIComponent(sector)}&lang=${currentLang}`;
+        }
+        
         console.log("LOG: Fetching descriptions from URL:", url);
         const res = await fetch(url);
         if (!res.ok) throw new Error('Descriptions could not be loaded.');
-        const list = await res.json();
+        list = await res.json();
         console.log("LOG: Fetched descriptions:", list);
+        
         const items = list.map(d => {
-            const dateStr = new Date(d.startDate).toLocaleDateString(currentLang);
-            return `<li>${dateStr} - <strong>${d.name}</strong>: ${d.description}</li>`;
+            let startDateStr, endDateStr;
+            if (d.startDate) {
+                startDateStr = new Date(d.startDate).toLocaleDateString(currentLang);
+                endDateStr = d.endDate ? new Date(d.endDate).toLocaleDateString(currentLang) : null;
+            } else if (d.holidayDate) {
+                startDateStr = new Date(d.holidayDate).toLocaleDateString(currentLang);
+                endDateStr = d.durationDays > 1 ? new Date(new Date(d.holidayDate).getTime() + (d.durationDays - 1) * 24 * 60 * 60 * 1000).toLocaleDateString(currentLang) : null;
+            }
+            
+            const name = d.name || d.holidayName;
+            const description = d.description || '';
+            
+            let dateDisplay = `<span class="date">${startDateStr}</span>`;
+            if (endDateStr && endDateStr !== startDateStr) {
+                dateDisplay += ` - <span class="date">${endDateStr}</span>`;
+            }
+            
+            return `<li>${dateDisplay} - <strong>${name}</strong>${description ? ': ' + description : ''}</li>`;
         }).join('');
         document.getElementById('holidaySummary').innerHTML = `<ul>${items}</ul>`;
     } catch (e) {
@@ -250,9 +517,8 @@ function setupEventListeners() {
                 console.log("LOG: Refetching calendar events.");
                 calendar.refetchEvents();
             }
-            if (id === 'country') {
-                loadDescriptions();
-            }
+            // Açıklamaları otomatik güncelle
+            loadDescriptions();
         });
     });
 
@@ -391,15 +657,17 @@ async function calculateRange() {
 
         const holidayDates = new Set(holidays.map(h => h.holidayDate));
         let workDays = 0;
-        let current = new Date(start);
-        const endDate = new Date(end);
+        let current = new Date(start + 'T00:00:00Z'); // UTC olarak başlat
+        const endDate = new Date(end + 'T00:00:00Z'); // UTC olarak bitir
+        
         while (current <= endDate) {
-            const day = current.getDay();
+            const day = current.getUTCDay(); // UTC gün al
             const iso = current.toISOString().slice(0,10);
+            // Cumartesi (6) ve Pazar (0) değilse ve tatil değilse iş günü say
             if (day !== 0 && day !== 6 && !holidayDates.has(iso)) {
                 workDays++;
             }
-            current.setDate(current.getDate() + 1);
+            current.setUTCDate(current.getUTCDate() + 1); // UTC gün ekle
         }
 
         document.getElementById('rangeResult').textContent =
