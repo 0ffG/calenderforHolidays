@@ -33,18 +33,14 @@
 </head>
 <body>
 
-  <h2 style="text-align:center;" id="page-title">📅 Holiday Calendar</h2>
+  <h2 style="text-align:center;">📅 Tatil Takvimi</h2>
 
   <!-- 🌐 Dil Seçimi -->
-  <label for="language-select" id="language-label">Select Language:</label>
-  <select id="language-select">
-    <option value="en" selected>English</option>
-    <option value="tr">Türkçe</option>
-    <option value="fr">Français</option>
-  </select>
+  <label for="language-select">Dil Seçin / Select Language:</label>
+  <select id="language-select"></select>
 
   <!-- 🌍 Ülke Seçimi -->
-  <label for="country-select" id="country-label">Select Country:</label>
+  <label for="country-select">Ülke Seçin:</label>
   <select id="country-select"></select>
 
   <!-- 📅 Takvim -->
@@ -52,27 +48,29 @@
 
   <!-- 🧮 Tatil ve İş Günü Hesaplayıcı -->
   <div class="form-section">
-    <h3 id="calculator-title">🧮 Holiday and Working Day Calculator</h3>
+    <h3>🧮 Tatil ve İş Günü Hesaplama</h3>
     
-    <label for="start-date" id="start-date-label">Start Date:</label>
+    <label for="start-date">Başlangıç Tarihi:</label>
     <input type="date" id="start-date" />
 
-    <label for="end-date" id="end-date-label">End Date:</label>
+    <label for="end-date">Bitiş Tarihi:</label>
     <input type="date" id="end-date" />
 
-    <label for="workplace" id="workplace-label">Workplace Type:</label>
+    <label for="workplace">Çalışma Tipi:</label>
     <select id="workplace"></select>
 
-    <label for="target-group" id="target-group-label">Target Group (optional):</label>
-    <select id="target-group"></select>
+    <label for="target-group">Hedef Grup (isteğe bağlı):</label>
+    <select id="target-group">
+      <option value="">-- Seç --</option>
+    </select>
 
-    <button onclick="calculate()" id="calculate-button">Calculate</button>
+    <button onclick="calculate()">Hesapla</button>
 
     <div class="result" id="result"></div>
   </div>
 
   <script>
-    let currentLang = 'en'; // Default to English
+    let currentLang = 'tr'; // Default language
 
     const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
       initialView: 'dayGridMonth',
@@ -80,19 +78,20 @@
     });
     calendar.render();
 
-    async function loadUITexts() {
-      const res = await fetch(`/api/ui-texts?lang=${currentLang}`);
-      const texts = await res.json();
-      
-      document.getElementById('page-title').textContent = texts.pageTitle;
-      document.getElementById('language-label').textContent = texts.languageLabel;
-      document.getElementById('country-label').textContent = texts.countryLabel;
-      document.getElementById('calculator-title').textContent = texts.calculatorTitle;
-      document.getElementById('start-date-label').textContent = texts.startDateLabel;
-      document.getElementById('end-date-label').textContent = texts.endDateLabel;
-      document.getElementById('workplace-label').textContent = texts.workplaceLabel;
-      document.getElementById('target-group-label').textContent = texts.targetGroupLabel;
-      document.getElementById('calculate-button').textContent = texts.calculateButton;
+    async function loadLanguages() {
+      const res = await fetch('/api/languages');
+      const languages = await res.json();
+      const select = document.getElementById('language-select');
+      select.innerHTML = '';
+      languages.forEach(lang => {
+        const option = document.createElement('option');
+        option.value = lang.code;
+        option.textContent = lang.name;
+        if (lang.code === currentLang) {
+          option.selected = true;
+        }
+        select.appendChild(option);
+      });
     }
 
     async function loadCountries() {
@@ -129,14 +128,7 @@
       const res = await fetch(`/api/target-groups?lang=${currentLang}`);
       const groups = await res.json();
       const select = document.getElementById('target-group');
-      select.innerHTML = '';
-      
-      // Add default empty option
-      const emptyOption = document.createElement('option');
-      emptyOption.value = '';
-      emptyOption.textContent = groups.length > 0 ? groups[0].defaultText || '-- Select --' : '-- Select --';
-      select.appendChild(emptyOption);
-      
+      select.innerHTML = '<option value="">-- Seç --</option>';
       groups.forEach(g => {
         const option = document.createElement('option');
         option.value = g.id;
@@ -180,25 +172,27 @@
       .then(res => res.json())
       .then(result => {
         document.getElementById('result').textContent =
-          `${result.holidayDaysLabel}: ${result.holidayDays}, ${result.workingDaysLabel}: ${result.workingDays}`;
+          `Toplam Tatil Günü: ${result.holidayDays}, İş Günü: ${result.workingDays}`;
       });
-    }
-
-    async function loadAllData() {
-      await loadUITexts();
-      await loadCountries();
-      await loadWorkplaceTypes();
-      await loadTargetGroups();
     }
 
     document.getElementById('language-select').addEventListener('change', (e) => {
       currentLang = e.target.value;
-      loadAllData();
+      loadCountries();
+      loadWorkplaceTypes();
+      loadTargetGroups();
     });
 
     document.getElementById('country-select').addEventListener('change', (e) => {
       loadHolidays(e.target.value);
     });
+
+    async function loadAllData() {
+      await loadLanguages();
+      await loadCountries();
+      await loadWorkplaceTypes();
+      await loadTargetGroups();
+    }
 
     // İlk yükleme
     loadAllData();
