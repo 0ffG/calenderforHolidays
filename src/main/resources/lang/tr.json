@@ -1,0 +1,11 @@
+{
+  "title": "📅 Tatil Takvimi",
+  "languageSelect": "Dil Seçin:",
+  "countrySelect": "Ülke Seçin:",
+  "calculatorTitle": "🧮 Tatil ve İş Günü Hesaplama",
+  "startDate": "Başlangıç Tarihi:",
+  "endDate": "Bitiş Tarihi:",
+  "workplaceType": "Çalışma Tipi:",
+  "targetGroup": "Hedef Grup (isteğe bağlı):",
+  "calculateButton": "Hesapla"
+}

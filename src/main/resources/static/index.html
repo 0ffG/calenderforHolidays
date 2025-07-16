@@ -71,6 +71,19 @@
 
   <script>
     let currentLang = 'tr'; // Default language
+    async function loadTexts() {
+        const res = await fetch(`/lang/${currentLang}.json`);
+        const t = await res.json();
+        document.querySelector("h2").textContent = t.title;
+        document.querySelector("label[for=language-select]").textContent = t.languageSelect;
+        document.querySelector("label[for=country-select]").textContent = t.countrySelect;
+        document.querySelector(".form-section h3").textContent = t.calculatorTitle;
+        document.querySelector("label[for=start-date]").textContent = t.startDate;
+        document.querySelector("label[for=end-date]").textContent = t.endDate;
+        document.querySelector("label[for=workplace]").textContent = t.workplaceType;
+        document.querySelector("label[for=target-group]").textContent = t.targetGroup;
+        document.querySelector(".form-section button").textContent = t.calculateButton;
+    }
 
     const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
       initialView: 'dayGridMonth',
@@ -181,6 +194,7 @@
       loadCountries();
       loadWorkplaceTypes();
       loadTargetGroups();
+      loadTexts();
     });
 
     document.getElementById('country-select').addEventListener('change', (e) => {
@@ -192,6 +206,7 @@
       await loadCountries();
       await loadWorkplaceTypes();
       await loadTargetGroups();
+      await loadTexts();
     }
 
     // İlk yükleme

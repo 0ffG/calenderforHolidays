@@ -1,0 +1,11 @@
+{
+  "title": "Calendrier des Fêtes",
+  "languageSelect": "Choisir la langue:",
+  "countrySelect": "Choisir le pays:",
+  "calculatorTitle": "Calculateur de Jours Ouvrés",
+  "startDate": "Date de début:",
+  "endDate": "Date de fin:",
+  "workplaceType": "Type de travail:",
+  "targetGroup": "Groupe cible (optionnel):",
+  "calculateButton": "Calculer"
+}
