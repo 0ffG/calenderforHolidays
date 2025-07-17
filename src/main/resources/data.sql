@@ -296,45 +296,45 @@ INSERT INTO Holiday_Dates (id, holiday_date) VALUES (35, DATE '2025-12-25'); -- 
 
 -- Insert Holiday Dates Description
 -- Turkey Holiday Descriptions
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (1, 1, 1, 0, 1);   -- New Year's Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (2, 2, 2, 0, 1);   -- National Sovereignty and Children's Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (3, 3, 3, 0, 1);   -- Labour and Solidarity Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (4, 4, 4, 0, 1);   -- Commemoration of Atatürk, Youth and Sports Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (5, 5, 5, 0, 1);   -- Democracy and National Unity Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (6, 6, 6, 0, 1);   -- Victory Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (7, 7, 7, 0, 1);   -- Republic Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (8, 8, 8, 0, 0);   -- Ramadan Feast Day 1
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (9, 8, 9, 0, 0);   -- Ramadan Feast Day 2
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (10, 8, 10, 0, 0); -- Ramadan Feast Day 3
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (11, 9, 11, 0, 0); -- Feast of Sacrifice Day 1
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (12, 9, 12, 0, 0); -- Feast of Sacrifice Day 2
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (13, 9, 13, 0, 0); -- Feast of Sacrifice Day 3
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (14, 9, 14, 0, 0); -- Feast of Sacrifice Day 4
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (1, 1, 1, 1);   -- New Year's Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (2, 2, 2, 1);   -- National Sovereignty and Children's Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (3, 3, 3, 1);   -- Labour and Solidarity Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (4, 4, 4, 1);   -- Commemoration of Atatürk, Youth and Sports Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (5, 5, 5, 1);   -- Democracy and National Unity Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (6, 6, 6, 1);   -- Victory Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (7, 7, 7, 1);   -- Republic Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (8, 8, 8, 0);   -- Ramadan Feast Day 1
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (9, 8, 9, 0);   -- Ramadan Feast Day 2
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (10, 8, 10, 0); -- Ramadan Feast Day 3
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (11, 9, 11, 0); -- Feast of Sacrifice Day 1
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (12, 9, 12, 0); -- Feast of Sacrifice Day 2
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (13, 9, 13, 0); -- Feast of Sacrifice Day 3
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (14, 9, 14, 0); -- Feast of Sacrifice Day 4
 
 -- USA Holiday Descriptions
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (15, 10, 15, 0, 1); -- New Year's Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (16, 11, 16, 0, 1); -- Martin Luther King Jr. Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (17, 12, 17, 0, 1); -- Presidents' Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (18, 13, 18, 0, 1); -- Memorial Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (19, 14, 19, 0, 1); -- Independence Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (20, 15, 20, 0, 1); -- Labor Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (21, 16, 21, 0, 1); -- Columbus Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (22, 17, 22, 0, 1); -- Veterans Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (23, 18, 23, 0, 1); -- Thanksgiving Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (24, 19, 24, 0, 1); -- Christmas Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (15, 10, 15, 1); -- New Year's Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (16, 11, 16, 1); -- Martin Luther King Jr. Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (17, 12, 17, 1); -- Presidents' Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (18, 13, 18, 1); -- Memorial Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (19, 14, 19, 1); -- Independence Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (20, 15, 20, 1); -- Labor Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (21, 16, 21, 1); -- Columbus Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (22, 17, 22, 1); -- Veterans Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (23, 18, 23, 1); -- Thanksgiving Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (24, 19, 24, 1); -- Christmas Day
 
 -- France Holiday Descriptions
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (25, 20, 25, 0, 1); -- New Year's Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (26, 21, 26, 0, 1); -- Easter Monday
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (27, 22, 27, 0, 1); -- Labour Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (28, 23, 28, 0, 1); -- Victory in Europe Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (29, 24, 29, 0, 1); -- Ascension Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (30, 25, 30, 0, 1); -- Whit Monday
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (31, 26, 31, 0, 1); -- Bastille Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (32, 27, 32, 0, 1); -- Assumption Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (33, 28, 33, 0, 1); -- All Saints Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (34, 29, 34, 0, 1); -- Armistice Day
-INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (35, 30, 35, 0, 1); -- Christmas Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (25, 20, 25, 1); -- New Year's Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (26, 21, 26, 1); -- Easter Monday
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (27, 22, 27, 1); -- Labour Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (28, 23, 28, 1); -- Victory in Europe Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (29, 24, 29, 1); -- Ascension Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (30, 25, 30, 1); -- Whit Monday
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (31, 26, 31, 1); -- Bastille Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (32, 27, 32, 1); -- Assumption Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (33, 28, 33, 1); -- All Saints Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (34, 29, 34, 1); -- Armistice Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_recurring) VALUES (35, 30, 35, 1); -- Christmas Day
 
 -- Insert Holiday Target Groups
 INSERT INTO Holiday_Target_Groups (id, default_name) VALUES (1, 'General Public');
