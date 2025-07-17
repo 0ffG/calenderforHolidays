@@ -6,6 +6,7 @@ INSERT INTO Languages (id, code) VALUES (3, 'FR');
 -- Insert Countries
 INSERT INTO Countries (id, default_name) VALUES (1, 'Turkey');
 INSERT INTO Countries (id, default_name) VALUES (2, 'United States');
+INSERT INTO Countries (id, default_name) VALUES (3, 'France');
 
 -- Insert Country Translations
 -- Turkey translations
@@ -17,6 +18,11 @@ INSERT INTO Country_Translations (country_id, language_id, name) VALUES (1, 3, '
 INSERT INTO Country_Translations (country_id, language_id, name) VALUES (2, 1, 'Amerika Birleşik Devletleri');
 INSERT INTO Country_Translations (country_id, language_id, name) VALUES (2, 2, 'United States');
 INSERT INTO Country_Translations (country_id, language_id, name) VALUES (2, 3, 'États-Unis');
+
+-- France translations
+INSERT INTO Country_Translations (country_id, language_id, name) VALUES (3, 1, 'Fransa');
+INSERT INTO Country_Translations (country_id, language_id, name) VALUES (3, 2, 'France');
+INSERT INTO Country_Translations (country_id, language_id, name) VALUES (3, 3, 'France');
 
 -- Insert Holidays
 -- Turkey Holidays
@@ -41,6 +47,19 @@ INSERT INTO Holidays (id, default_name) VALUES (16, 'Columbus Day');
 INSERT INTO Holidays (id, default_name) VALUES (17, 'Veterans Day');
 INSERT INTO Holidays (id, default_name) VALUES (18, 'Thanksgiving Day');
 INSERT INTO Holidays (id, default_name) VALUES (19, 'Christmas Day');
+
+-- France Holidays
+INSERT INTO Holidays (id, default_name) VALUES (20, 'New Year''s Day');
+INSERT INTO Holidays (id, default_name) VALUES (21, 'Easter Monday');
+INSERT INTO Holidays (id, default_name) VALUES (22, 'Labour Day');
+INSERT INTO Holidays (id, default_name) VALUES (23, 'Victory in Europe Day');
+INSERT INTO Holidays (id, default_name) VALUES (24, 'Ascension Day');
+INSERT INTO Holidays (id, default_name) VALUES (25, 'Whit Monday');
+INSERT INTO Holidays (id, default_name) VALUES (26, 'Bastille Day');
+INSERT INTO Holidays (id, default_name) VALUES (27, 'Assumption Day');
+INSERT INTO Holidays (id, default_name) VALUES (28, 'All Saints Day');
+INSERT INTO Holidays (id, default_name) VALUES (29, 'Armistice Day');
+INSERT INTO Holidays (id, default_name) VALUES (30, 'Christmas Day');
 
 -- Insert Holiday Translations
 -- Turkey Holiday Translations
@@ -140,6 +159,62 @@ INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (1
 INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (19, 2, 'Christmas Day', 'Federal');
 INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (19, 3, 'Noël', 'Federal');
 
+-- France Holiday Translations
+-- New Year's Day
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (20, 1, 'Yılbaşı', 'National');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (20, 2, 'New Year''s Day', 'National');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (20, 3, 'Jour de l''An', 'National');
+
+-- Easter Monday
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (21, 1, 'Paskalya Pazartesisi', 'Religious');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (21, 2, 'Easter Monday', 'Religious');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (21, 3, 'Lundi de Pâques', 'Religious');
+
+-- Labour Day
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (22, 1, 'İşçi Bayramı', 'National');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (22, 2, 'Labour Day', 'National');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (22, 3, 'Fête du Travail', 'National');
+
+-- Victory in Europe Day
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (23, 1, 'Zafer Günü', 'National');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (23, 2, 'Victory in Europe Day', 'National');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (23, 3, 'Fête de la Victoire', 'National');
+
+-- Ascension Day
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (24, 1, 'Göğe Yükseliş Günü', 'Religious');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (24, 2, 'Ascension Day', 'Religious');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (24, 3, 'Jour de l''Ascension', 'Religious');
+
+-- Whit Monday
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (25, 1, 'Pentekost Pazartesisi', 'Religious');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (25, 2, 'Whit Monday', 'Religious');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (25, 3, 'Lundi de Pentecôte', 'Religious');
+
+-- Bastille Day
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (26, 1, 'Bastille Günü', 'National');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (26, 2, 'Bastille Day', 'National');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (26, 3, 'Fête Nationale', 'National');
+
+-- Assumption Day
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (27, 1, 'Meryem''in Göğe Kabulü', 'Religious');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (27, 2, 'Assumption Day', 'Religious');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (27, 3, 'Assomption', 'Religious');
+
+-- All Saints Day
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (28, 1, 'Azizler Günü', 'Religious');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (28, 2, 'All Saints Day', 'Religious');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (28, 3, 'Toussaint', 'Religious');
+
+-- Armistice Day
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (29, 1, 'Ateşkes Günü', 'National');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (29, 2, 'Armistice Day', 'National');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (29, 3, 'Armistice', 'National');
+
+-- Christmas Day (France)
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (30, 1, 'Noel', 'Religious');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (30, 2, 'Christmas Day', 'Religious');
+INSERT INTO Holiday_Translations (holiday_id, language_id, name, type) VALUES (30, 3, 'Noël', 'Religious');
+
 -- Insert Holiday Countries
 -- Turkey holidays
 INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (1, 1);  -- New Year's Day - Turkey
@@ -163,6 +238,19 @@ INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (16, 2); -- Columb
 INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (17, 2); -- Veterans Day - USA
 INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (18, 2); -- Thanksgiving Day - USA
 INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (19, 2); -- Christmas Day - USA
+
+-- France holidays
+INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (20, 3); -- New Year's Day - France
+INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (21, 3); -- Easter Monday - France
+INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (22, 3); -- Labour Day - France
+INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (23, 3); -- Victory in Europe Day - France
+INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (24, 3); -- Ascension Day - France
+INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (25, 3); -- Whit Monday - France
+INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (26, 3); -- Bastille Day - France
+INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (27, 3); -- Assumption Day - France
+INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (28, 3); -- All Saints Day - France
+INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (29, 3); -- Armistice Day - France
+INSERT INTO Holiday_Countries (holiday_id, country_id) VALUES (30, 3); -- Christmas Day - France
 
 -- Insert Holiday Dates for 2025
 -- Turkey Holiday Dates
@@ -193,6 +281,19 @@ INSERT INTO Holiday_Dates (id, holiday_date) VALUES (22, DATE '2025-11-11'); -- 
 INSERT INTO Holiday_Dates (id, holiday_date) VALUES (23, DATE '2025-11-27'); -- Thanksgiving Day
 INSERT INTO Holiday_Dates (id, holiday_date) VALUES (24, DATE '2025-12-25'); -- Christmas Day
 
+-- France Holiday Dates
+INSERT INTO Holiday_Dates (id, holiday_date) VALUES (25, DATE '2025-01-01'); -- New Year's Day
+INSERT INTO Holiday_Dates (id, holiday_date) VALUES (26, DATE '2025-04-21'); -- Easter Monday
+INSERT INTO Holiday_Dates (id, holiday_date) VALUES (27, DATE '2025-05-01'); -- Labour Day
+INSERT INTO Holiday_Dates (id, holiday_date) VALUES (28, DATE '2025-05-08'); -- Victory in Europe Day
+INSERT INTO Holiday_Dates (id, holiday_date) VALUES (29, DATE '2025-05-29'); -- Ascension Day
+INSERT INTO Holiday_Dates (id, holiday_date) VALUES (30, DATE '2025-06-09'); -- Whit Monday
+INSERT INTO Holiday_Dates (id, holiday_date) VALUES (31, DATE '2025-07-14'); -- Bastille Day
+INSERT INTO Holiday_Dates (id, holiday_date) VALUES (32, DATE '2025-08-15'); -- Assumption Day
+INSERT INTO Holiday_Dates (id, holiday_date) VALUES (33, DATE '2025-11-01'); -- All Saints Day
+INSERT INTO Holiday_Dates (id, holiday_date) VALUES (34, DATE '2025-11-11'); -- Armistice Day
+INSERT INTO Holiday_Dates (id, holiday_date) VALUES (35, DATE '2025-12-25'); -- Christmas Day
+
 -- Insert Holiday Dates Description
 -- Turkey Holiday Descriptions
 INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (1, 1, 1, 0, 1);   -- New Year's Day
@@ -221,6 +322,19 @@ INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_
 INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (22, 17, 22, 0, 1); -- Veterans Day
 INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (23, 18, 23, 0, 1); -- Thanksgiving Day
 INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (24, 19, 24, 0, 1); -- Christmas Day
+
+-- France Holiday Descriptions
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (25, 20, 25, 0, 1); -- New Year's Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (26, 21, 26, 0, 1); -- Easter Monday
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (27, 22, 27, 0, 1); -- Labour Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (28, 23, 28, 0, 1); -- Victory in Europe Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (29, 24, 29, 0, 1); -- Ascension Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (30, 25, 30, 0, 1); -- Whit Monday
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (31, 26, 31, 0, 1); -- Bastille Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (32, 27, 32, 0, 1); -- Assumption Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (33, 28, 33, 0, 1); -- All Saints Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (34, 29, 34, 0, 1); -- Armistice Day
+INSERT INTO Holiday_Dates_Description (id, holiday_id, date_id, is_half_day, is_recurring) VALUES (35, 30, 35, 0, 1); -- Christmas Day
 
 -- Insert Holiday Target Groups
 INSERT INTO Holiday_Target_Groups (id, default_name) VALUES (1, 'General Public');
@@ -373,6 +487,62 @@ INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id,
 INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (24, 2, 'Christmas Day - celebrating the birth of Jesus Christ');
 INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (24, 3, 'Noël - célébrant la naissance de Jésus-Christ');
 
+-- France Holiday Description Translations
+-- New Year's Day
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (25, 1, 'Yılbaşı tatili - ulusal tatil');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (25, 2, 'New Year''s Day holiday - national public holiday');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (25, 3, 'Vacances du Jour de l''An - jour férié national');
+
+-- Easter Monday
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (26, 1, 'Paskalya Pazartesisi - dini tatil');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (26, 2, 'Easter Monday - religious holiday');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (26, 3, 'Lundi de Pâques - jour férié religieux');
+
+-- Labour Day
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (27, 1, 'İşçi Bayramı - çalışanları kutlama');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (27, 2, 'Labour Day - celebrating workers');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (27, 3, 'Fête du Travail - célébration des travailleurs');
+
+-- Victory in Europe Day
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (28, 1, 'Zafer Günü - II. Dünya Savaşı''nın sonu');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (28, 2, 'Victory in Europe Day - end of WWII in Europe');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (28, 3, 'Fête de la Victoire - fin de la Seconde Guerre mondiale');
+
+-- Ascension Day
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (29, 1, 'Göğe Yükseliş Günü - dini tatil');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (29, 2, 'Ascension Day - religious holiday');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (29, 3, 'Jour de l''Ascension - jour férié religieux');
+
+-- Whit Monday
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (30, 1, 'Pentekost Pazartesisi - dini tatil');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (30, 2, 'Whit Monday - religious holiday');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (30, 3, 'Lundi de Pentecôte - jour férié religieux');
+
+-- Bastille Day
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (31, 1, 'Bastille Günü - Fransız Ulusal Günü');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (31, 2, 'Bastille Day - French National Day');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (31, 3, 'Fête Nationale - fête nationale française');
+
+-- Assumption Day
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (32, 1, 'Meryem''in Göğe Kabulü - dini tatil');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (32, 2, 'Assumption Day - religious holiday');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (32, 3, 'Assomption - jour férié religieux');
+
+-- All Saints Day
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (33, 1, 'Azizler Günü - dini tatil');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (33, 2, 'All Saints Day - religious holiday');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (33, 3, 'Toussaint - jour férié religieux');
+
+-- Armistice Day
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (34, 1, 'Ateşkes Günü - Birinci Dünya Savaşı''nın sonu');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (34, 2, 'Armistice Day - end of World War I');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (34, 3, 'Armistice - fin de la Première Guerre mondiale');
+
+-- Christmas Day (France)
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (35, 1, 'Noel - İsa Mesih''in doğumunu kutlama');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (35, 2, 'Christmas Day - celebrating the birth of Jesus Christ');
+INSERT INTO Holiday_Dates_Description_Translations (description_id, language_id, description) VALUES (35, 3, 'Noël - célébrant la naissance de Jésus-Christ');
+
 -- Insert Holiday Target Group Map
 -- Turkey holidays - all apply to general public
 INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (1, 1);  -- New Year's Day
@@ -410,9 +580,23 @@ INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALU
 INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (22, 1); -- Veterans Day
 INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (23, 1); -- Thanksgiving Day
 
+-- France holidays - all apply to general public
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (25, 1); -- New Year's Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (26, 1); -- Easter Monday France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (27, 1); -- Labour Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (28, 1); -- Victory in Europe Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (29, 1); -- Ascension Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (30, 1); -- Whit Monday France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (31, 1); -- Bastille Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (32, 1); -- Assumption Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (33, 1); -- All Saints Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (34, 1); -- Armistice Day France
+
 -- Christmas also applies to religious groups
 INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (24, 1); -- Christmas Day
 INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (24, 5); -- Christmas Day - Religious Groups
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (35, 1); -- Christmas Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (35, 5); -- Christmas Day France - Religious Groups
 
 -- Government employees get all holidays
 INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (1, 2);  -- New Year's Day Turkey
@@ -441,5 +625,18 @@ INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALU
 INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (22, 2); -- Veterans Day
 INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (23, 2); -- Thanksgiving Day
 INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (24, 2); -- Christmas Day
+
+-- France Government employees
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (25, 2); -- New Year's Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (26, 2); -- Easter Monday France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (27, 2); -- Labour Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (28, 2); -- Victory in Europe Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (29, 2); -- Ascension Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (30, 2); -- Whit Monday France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (31, 2); -- Bastille Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (32, 2); -- Assumption Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (33, 2); -- All Saints Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (34, 2); -- Armistice Day France
+INSERT INTO Holiday_Target_Group_Map (date_description_id, target_group_id) VALUES (35, 2); -- Christmas Day France
 
 COMMIT;
