@@ -1,0 +1,11 @@
+{
+  "title": "Holiday Calendar",
+  "languageSelect": "Select Language:",
+  "countrySelect": "Select Country:",
+  "calculatorTitle": "Working Day Calculator",
+  "startDate": "Start Date:",
+  "endDate": "End Date:",
+  "workplaceType": "Workplace Type:",
+  "targetGroup": "Target Group (optional):",
+  "calculateButton": "Calculate"
+}
