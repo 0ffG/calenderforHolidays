@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Holiday Calendar</title>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #calendar {
+      max-width: 900px;
+      margin: 40px auto;
+    }
+    .form-section {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+    }
+    .form-section label, .form-section select, .form-section input {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h2 style="text-align:center;">📅 Tatil Takvimi</h2>
+
+  <!-- 🌐 Dil Seçimi -->
+  <label for="language-select">Dil Seçin / Select Language:</label>
+  <select id="language-select"></select>
+
+  <!-- 🌍 Ülke Seçimi -->
+  <label for="country-select">Ülke Seçin:</label>
+  <select id="country-select"></select>
+
+  <!-- 📅 Takvim -->
+  <div id="calendar"></div>
+
+  <!-- 🧮 Tatil ve İş Günü Hesaplayıcı -->
+  <div class="form-section">
+    <h3>🧮 Tatil ve İş Günü Hesaplama</h3>
+    
+    <label for="start-date">Başlangıç Tarihi:</label>
+    <input type="date" id="start-date" />
+
+    <label for="end-date">Bitiş Tarihi:</label>
+    <input type="date" id="end-date" />
+
+    <label for="workplace">Çalışma Tipi:</label>
+    <select id="workplace"></select>
+
+    <label for="target-group">Hedef Grup (isteğe bağlı):</label>
+    <select id="target-group">
+      <option value="">-- Seç --</option>
+    </select>
+
+    <button onclick="calculate()">Hesapla</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    let currentLang = 'tr'; // Default language
+
+    const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+      initialView: 'dayGridMonth',
+      events: []
+    });
+    calendar.render();
+
+    async function loadLanguages() {
+      const res = await fetch('/api/languages');
+      const languages = await res.json();
+      const select = document.getElementById('language-select');
+      select.innerHTML = '';
+      languages.forEach(lang => {
+        const option = document.createElement('option');
+        option.value = lang.code;
+        option.textContent = lang.name;
+        if (lang.code === currentLang) {
+          option.selected = true;
+        }
+        select.appendChild(option);
+      });
+    }
+
+    async function loadCountries() {
+      const res = await fetch(`/api/countries?lang=${currentLang}`);
+      const countries = await res.json();
+      const select = document.getElementById('country-select');
+      select.innerHTML = '';
+      countries.forEach(c => {
+        const option = document.createElement('option');
+        option.value = c.id;
+        option.textContent = c.name;
+        select.appendChild(option);
+      });
+      if (countries.length > 0) {
+        select.value = countries[0].id;
+        loadHolidays(countries[0].id);
+      }
+    }
+
+    async function loadWorkplaceTypes() {
+      const res = await fetch(`/api/workplace-types?lang=${currentLang}`);
+      const types = await res.json();
+      const select = document.getElementById('workplace');
+      select.innerHTML = '';
+      types.forEach(t => {
+        const option = document.createElement('option');
+        option.value = t.id;
+        option.textContent = t.name;
+        select.appendChild(option);
+      });
+    }
+
+    async function loadTargetGroups() {
+      const res = await fetch(`/api/target-groups?lang=${currentLang}`);
+      const groups = await res.json();
+      const select = document.getElementById('target-group');
+      select.innerHTML = '<option value="">-- Seç --</option>';
+      groups.forEach(g => {
+        const option = document.createElement('option');
+        option.value = g.id;
+        option.textContent = g.name;
+        select.appendChild(option);
+      });
+    }
+
+    async function loadHolidays(countryId) {
+      const res = await fetch(`/api/holidays?countryId=${countryId}&lang=${currentLang}`);
+      const holidays = await res.json();
+      calendar.removeAllEvents();
+      holidays.forEach(h => {
+        calendar.addEvent({
+          title: h.name,
+          start: h.date,
+          allDay: true
+        });
+      });
+    }
+
+    function calculate() {
+      const start = document.getElementById('start-date').value;
+      const end = document.getElementById('end-date').value;
+      const type = document.getElementById('workplace').value;
+      const group = document.getElementById('target-group').value;
+      const countryId = document.getElementById('country-select').value;
+
+      fetch('/api/calculate-working-days', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          startDate: start,
+          endDate: end,
+          workplaceType: type,
+          targetGroupId: group || null,
+          countryId: countryId,
+          language: currentLang
+        })
+      })
+      .then(res => res.json())
+      .then(result => {
+        document.getElementById('result').textContent =
+          `Toplam Tatil Günü: ${result.holidayDays}, İş Günü: ${result.workingDays}`;
+      });
+    }
+
+    document.getElementById('language-select').addEventListener('change', (e) => {
+      currentLang = e.target.value;
+      loadCountries();
+      loadWorkplaceTypes();
+      loadTargetGroups();
+    });
+
+    document.getElementById('country-select').addEventListener('change', (e) => {
+      loadHolidays(e.target.value);
+    });
+
+    async function loadAllData() {
+      await loadLanguages();
+      await loadCountries();
+      await loadWorkplaceTypes();
+      await loadTargetGroups();
+    }
+
+    // İlk yükleme
+    loadAllData();
+  </script>
+</body>
+</html>
