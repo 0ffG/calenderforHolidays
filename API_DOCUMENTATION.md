@@ -129,21 +129,43 @@ GET /api/targetgroup?lang=tr
 }
 ```
 
-### 5. Holidays API - Tatil Listesi (Bonus)
+### 5. Holidays API - Tatil Listesi 
 **GET** `/api/holidays?countryId={countryId}&targetGroupId={targetGroupId}&startDate={startDate}&endDate={endDate}&lang={languageCode}`
 
-Belirtilen kriterlere göre tatilleri listeler.
+Belirtilen kriterlere göre tatilleri listeler. Bu API artık daha esnek kullanım sağlar:
+
+#### 5.1. Ülkenin Tüm Tatillerini Getir
+**GET** `/api/holidays?countryId={countryId}&lang={languageCode}`
+
+Belirtilen ülkenin tüm tatillerini getirir (tarih aralığı ve hedef grup kısıtlaması olmadan).
 
 **Parameters:**
 - `countryId` (required): Ülke ID
-- `targetGroupId` (required): Hedef grup ID
-- `startDate` (required): Başlangıç tarihi (YYYY-MM-DD)
-- `endDate` (required): Bitiş tarihi (YYYY-MM-DD)
 - `lang` (optional): Dil kodu (tr/en), varsayılan: tr
 
 **Example:**
 ```
+GET /api/holidays?countryId=1&lang=tr
+```
+
+#### 5.2. Filtrelenmiş Tatil Listesi
+**GET** `/api/holidays?countryId={countryId}&targetGroupId={targetGroupId}&startDate={startDate}&endDate={endDate}&lang={languageCode}`
+
+Belirtilen kriterlere göre filtrelenmiş tatilleri listeler.
+
+**Parameters:**
+- `countryId` (required): Ülke ID
+- `targetGroupId` (optional): Hedef grup ID - belirtilirse sadece o gruba ait tatiller
+- `startDate` (optional): Başlangıç tarihi (YYYY-MM-DD) - belirtilirse tarih aralığı filtresi
+- `endDate` (optional): Bitiş tarihi (YYYY-MM-DD) - belirtilirse tarih aralığı filtresi
+- `lang` (optional): Dil kodu (tr/en), varsayılan: tr
+
+**Note:** `targetGroupId`, `startDate` ve `endDate` parametreleri birlikte kullanılmalıdır. Eğer sadece `countryId` verilirse, o ülkenin tüm tatilleri döner.
+
+**Examples:**
+```
 GET /api/holidays?countryId=1&targetGroupId=2&startDate=2025-01-01&endDate=2025-12-31&lang=tr
+GET /api/holidays?countryId=1&lang=en
 ```
 
 ### 6. API Info - Uygulama Bilgisi

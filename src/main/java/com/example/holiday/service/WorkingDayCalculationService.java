@@ -34,7 +34,14 @@ public class WorkingDayCalculationService {
         // Convert to HolidayInfo objects
         List<HolidayInfo> holidays = new ArrayList<>();
         for (Object[] result : holidayResults) {
-            LocalDate date = ((java.sql.Date) result[0]).toLocalDate();
+            LocalDate date;
+            if (result[0] instanceof java.sql.Date) {
+                date = ((java.sql.Date) result[0]).toLocalDate();
+            } else if (result[0] instanceof java.sql.Timestamp) {
+                date = ((java.sql.Timestamp) result[0]).toLocalDateTime().toLocalDate();
+            } else {
+                throw new RuntimeException("Unexpected date type: " + result[0].getClass());
+            }
             String name = (String) result[1];
             boolean isHalfDay = ((Number) result[2]).intValue() == 1;
             holidays.add(new HolidayInfo(date, name, isHalfDay));
