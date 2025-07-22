@@ -9,6 +9,11 @@
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    h2 {
+      color: #003366;
     }
     #calendar {
       max-width: 900px;
@@ -19,6 +24,7 @@
       margin: auto;
       padding: 20px;
       border: 1px solid #ccc;
+      background-color: #fff;
     }
     .form-section label, .form-section select, .form-section input {
       display: block;
@@ -33,7 +39,7 @@
 </head>
 <body>
 
-  <h2 style="text-align:center;">📅 Tatil Takvimi</h2>
+  <h2 style="text-align:center;">Tatil Takvimi</h2>
 
   <!-- 🌐 Dil Seçimi -->
   <label for="language-select">Dil Seçin / Select Language:</label>
@@ -56,8 +62,6 @@
     <label for="end-date">Bitiş Tarihi:</label>
     <input type="date" id="end-date" />
 
-    <label for="workplace">Çalışma Tipi:</label>
-    <select id="workplace"></select>
 
     <label for="target-group">Hedef Grup (isteğe bağlı):</label>
     <select id="target-group">
@@ -67,6 +71,7 @@
     <button onclick="calculate()">Hesapla</button>
 
     <div class="result" id="result"></div>
+    <div class="result" id="info"></div>
   </div>
 
   <script>
@@ -79,7 +84,7 @@
     calendar.render();
 
     async function loadLanguages() {
-      const res = await fetch('/api/languages');
+      const res = await fetch('/api/language');
       const languages = await res.json();
       const select = document.getElementById('language-select');
       select.innerHTML = '';
@@ -95,7 +100,7 @@
     }
 
     async function loadCountries() {
-      const res = await fetch(`/api/countries?lang=${currentLang}`);
+      const res = await fetch(`/api/country?lang=${currentLang}`);
       const countries = await res.json();
       const select = document.getElementById('country-select');
       select.innerHTML = '';
@@ -111,21 +116,9 @@
       }
     }
 
-    async function loadWorkplaceTypes() {
-      const res = await fetch(`/api/workplace-types?lang=${currentLang}`);
-      const types = await res.json();
-      const select = document.getElementById('workplace');
-      select.innerHTML = '';
-      types.forEach(t => {
-        const option = document.createElement('option');
-        option.value = t.id;
-        option.textContent = t.name;
-        select.appendChild(option);
-      });
-    }
 
     async function loadTargetGroups() {
-      const res = await fetch(`/api/target-groups?lang=${currentLang}`);
+      const res = await fetch(`/api/targetgroup?lang=${currentLang}`);
       const groups = await res.json();
       const select = document.getElementById('target-group');
       select.innerHTML = '<option value="">-- Seç --</option>';
@@ -150,23 +143,26 @@
       });
     }
 
+    async function loadInfo() {
+      const res = await fetch('/api/info');
+      const info = await res.json();
+      document.getElementById('info').textContent = `${info.application} v${info.version}`;
+    }
+
     function calculate() {
       const start = document.getElementById('start-date').value;
       const end = document.getElementById('end-date').value;
-      const type = document.getElementById('workplace').value;
       const group = document.getElementById('target-group').value;
       const countryId = document.getElementById('country-select').value;
 
-      fetch('/api/calculate-working-days', {
+      fetch(`/api/calculateWorkingDay?lang=${currentLang}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           startDate: start,
           endDate: end,
-          workplaceType: type,
           targetGroupId: group || null,
-          countryId: countryId,
-          language: currentLang
+          countryId: countryId
         })
       })
       .then(res => res.json())
@@ -179,7 +175,6 @@
     document.getElementById('language-select').addEventListener('change', (e) => {
       currentLang = e.target.value;
       loadCountries();
-      loadWorkplaceTypes();
       loadTargetGroups();
     });
 
@@ -190,8 +185,8 @@
     async function loadAllData() {
       await loadLanguages();
       await loadCountries();
-      await loadWorkplaceTypes();
       await loadTargetGroups();
+      await loadInfo();
     }
 
     // İlk yükleme
